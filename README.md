@@ -1,4 +1,4 @@
-# cports
+cports
 
 Cports is a collection of source package ports for Chimera. The system has been
 written specifically for the distribution using the Python scripting language.
