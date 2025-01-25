@@ -1,5 +1,5 @@
 pkgname = "libvirt"
-pkgver = "10.9.0"
+pkgver = "11.0.0"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
@@ -56,7 +56,7 @@ makedepends = [
     "gnutls-devel",
     "json-c-devel",
     "libcap-ng-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libiscsi-devel",
     "libnl-devel",
     "libnuma-devel",
@@ -79,13 +79,16 @@ checkdepends = [
     "python-flake8",
     "python-pytest",
 ]
-depends = ["dinit-dbus", "dnsmasq", "virtiofsd-meta"]
+depends = ["dinit-dbus", "dnsmasq"]
 pkgdesc = "API, daemon, and management tool for virtualization"
 maintainer = "cesorious <cesorious@gmail.com>"
 license = "LGPL-2.1-only"
 url = "https://libvirt.org"
 source = f"https://download.libvirt.org/libvirt-{pkgver}.tar.xz"
-sha256 = "2473db10bb9b9992c02897cef4b26ae58885ff357cea5f9ce3ec9e008f6b5b3a"
+sha256 = "01a176ff4042ad58cf83c09fe0925d6bc8eed0ecce1e0ee19b8ef4c1ffa3806e"
+
+if self.profile().wordsize != 32:
+    depends += ["virtiofsd-meta"]
 
 
 def post_install(self):

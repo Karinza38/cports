@@ -1,5 +1,5 @@
 pkgname = "erofs-utils"
-pkgver = "1.8.2"
+pkgver = "1.8.4"
 pkgrel = 0
 build_style = "gnu_configure"
 configure_args = [
@@ -30,5 +30,5 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "Apache-2.0 AND GPL-2.0-or-later"
 url = "https://github.com/erofs/erofs-utils"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "64b6ff7e899f62480283cee63787f37f0f9c4be7a6bc7a23d734aaa873a6cff4"
+sha256 = "791587aa074bb9f9fa218c762cc1f60b015e2f51bcb2ce91f682f043856ab494"
 tool_flags = {"LDFLAGS": ["-Wl,-z,stack-size=2097152"]}

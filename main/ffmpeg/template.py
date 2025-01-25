@@ -1,6 +1,6 @@
 pkgname = "ffmpeg"
 pkgver = "7.1"
-pkgrel = 3
+pkgrel = 4
 build_style = "configure"
 configure_args = [
     "--prefix=/usr",
@@ -77,7 +77,6 @@ hostmakedepends = [
     "nasm",
     "perl",
     "pkgconf",
-    "texinfo",
 ]
 makedepends = [
     "bzip2-devel",
@@ -124,7 +123,7 @@ makedepends = [
     "pipewire-jack-devel",
     "rav1e-devel",
     "rubberband-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "shaderc-devel",
     "soxr-devel",
     "svt-av1-devel",
@@ -152,7 +151,7 @@ tool_flags = {"CFLAGS": ["-D_GNU_SOURCE"]}
 # seems to need rpath?
 options = ["!check"]
 
-if self.profile().arch != "riscv64":
+if self.has_lto(force=True):
     configure_args += ["--enable-lto=thin"]
 
 if self.profile().cross:

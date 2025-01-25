@@ -1,5 +1,5 @@
 pkgname = "udev"
-pkgver = "256.9"
+pkgver = "256.11"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
@@ -124,7 +124,7 @@ url = "https://github.com/systemd/systemd"
 source = (
     f"https://github.com/systemd/systemd/archive/refs/tags/v{pkgver}.tar.gz"
 )
-sha256 = "9f2bda967a30ec4602e7ea93d565eb43670ca1dffbb808c72758d5f0213508c8"
+sha256 = "5038424744b2ed8c1d7ecc75b00eeffe68528f9789411da60f199d65762d9ba5"
 # the tests that can run are mostly useless
 options = ["!splitudev", "!check"]
 

@@ -1,5 +1,5 @@
 pkgname = "qbittorrent"
-pkgver = "5.0.2"
+pkgver = "5.0.3"
 pkgrel = 0
 build_style = "cmake"
 configure_args = ["-DSTACKTRACE=OFF"]
@@ -13,7 +13,7 @@ makedepends = [
     "boost-devel",
     "libtorrent-rasterbar-devel",
     "openssl-devel",
-    "qt6-qtbase-devel",
+    "qt6-qtbase-private-devel",  # qtcore-config_p.h
     "qt6-qtsvg-devel",
     "qt6-qttools-devel",
 ]
@@ -23,7 +23,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-2.0-or-later"
 url = "https://www.qbittorrent.org"
 source = f"https://github.com/qbittorrent/qBittorrent/archive/refs/tags/release-{pkgver}.tar.gz"
-sha256 = "ba46f7ac0c530ab6ba81fdce6f4488393cd67dd1a9d823660e26081773569274"
+sha256 = "12dc7228b6fd1f0c184e0fd58836797b9f01fd7da89c9ff65795a031eb571759"
 # CFI: BitTorrent::SessionImpl::SessionImpl crash
 hardening = ["vis", "!cfi"]
 # don't build

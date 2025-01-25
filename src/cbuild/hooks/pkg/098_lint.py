@@ -1,6 +1,14 @@
+def _lint_static_cfi(pkg):
+    if pkg.rparent.has_hardening("cfi") and not pkg.options["ltostrip"]:
+        pkg.log_red("CFI enabled on a template with static libraries")
+        return False
+
+    return True
+
+
 def _lint_static(pkg):
     if pkg.pkgname.endswith("-static"):
-        return True
+        return _lint_static_cfi(pkg)
 
     for v in (pkg.destdir / "usr/lib").rglob("*.a"):
         allow = not pkg.rparent.options["lto"] or pkg.options["ltostrip"]
@@ -11,7 +19,7 @@ def _lint_static(pkg):
             pkg.log_warn(
                 "static libraries should usually be in the -static package"
             )
-            return True
+            return _lint_static_cfi(pkg)
 
     return True
 
@@ -93,7 +101,10 @@ def _lint_comp(pkg):
 def _lint_devel(pkg):
     # lint for LTOed static stuff first, regardless of -devel
     if pkg.options["lintstatic"] and not _lint_static(pkg):
-        pkg.error("package lint failed")
+        pkg.error(
+            "package lint failed",
+            hint="maybe you forgot to create a -devel subpackage?",
+        )
 
     if pkg.pkgname.endswith("-devel"):
         return
@@ -141,10 +152,6 @@ def invoke(pkg):
 
     # does not apply
     if pkg.pkgname == "base-files" or pkg.pkgname == "base-kernel":
-        return
-
-    # gcompat is non-standard, it has lib64 etc.
-    if pkg.pkgname == "gcompat":
         return
 
     lintfail = False
@@ -269,6 +276,11 @@ def invoke(pkg):
             if (sp / d).exists():
                 pkg.log_red(f"{d} found in Python site-packages")
                 lintfail = True
+
+    # kernel signing stuff, reject explicitly
+    for d in (pkg.destdir / "usr/src").glob("linux-headers-*/certs"):
+        for f in d.glob("signing_key.*"):
+            pkg.log_red(f"{d} found in packaged kernel headers")
 
     if lintfail:
         pkg.error("package lint failed")

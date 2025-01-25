@@ -1,5 +1,5 @@
 pkgname = "clang-rt-crt-wasi"
-pkgver = "19.1.4"
+pkgver = "19.1.7"
 pkgrel = 0
 build_style = "cmake"
 configure_args = [
@@ -8,7 +8,7 @@ configure_args = [
     "-DCMAKE_SYSTEM_VERSION=1",
     "-DCMAKE_SYSTEM_PROCESSOR=wasm32",
     "-DCMAKE_SYSROOT=/usr/wasm32-unknown-wasi",
-    f"-DCMAKE_INSTALL_PREFIX=/usr/lib/clang/{pkgver[0:pkgver.find('.')]}",
+    f"-DCMAKE_INSTALL_PREFIX=/usr/lib/clang/{pkgver[0 : pkgver.find('.')]}",
     # prevent executable checks
     "-DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY",
     # only build that target
@@ -43,7 +43,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "Apache-2.0 WITH LLVM-exception AND NCSA"
 url = "https://llvm.org"
 source = f"https://github.com/llvm/llvm-project/releases/download/llvmorg-{pkgver}/llvm-project-{pkgver}.src.tar.xz"
-sha256 = "3aa2d2d2c7553164ad5c6f3b932b31816e422635e18620c9349a7da95b98d811"
+sha256 = "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501"
 debug_level = 0
 hardening = ["!int", "!scp", "!var-init"]
 # crosstoolchain
@@ -64,10 +64,10 @@ def init_configure(self):
 
 def post_install(self):
     self.install_license("LICENSE.TXT")
-    self.uninstall(f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/include")
+    self.uninstall(f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/include")
     self.install_link(
-        f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/lib/wasip1", "wasi"
+        f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/lib/wasip1", "wasi"
     )
     self.install_link(
-        f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/lib/wasip2", "wasi"
+        f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/lib/wasip2", "wasi"
     )

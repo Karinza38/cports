@@ -1,5 +1,5 @@
 pkgname = "unrar"
-pkgver = "7.1.1"
+pkgver = "7.1.3"
 pkgrel = 0
 build_style = "makefile"
 make_use_env = True
@@ -8,7 +8,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "custom:unrar"
 url = "https://www.rarlab.com/rar_add.htm"
 source = f"https://www.rarlab.com/rar/unrarsrc-{pkgver}.tar.gz"
-sha256 = "2e9cbc9d1c250b40f4a7a6a363b6ccfa3703e190534979d18c8c4ac5ae35dafc"
+sha256 = "f7edb6f55fb53611206781d9e56f2625ef4411a6b129768800196617d9df920a"
 # no tests
 options = ["!check"]
 

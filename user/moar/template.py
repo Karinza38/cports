@@ -1,5 +1,5 @@
 pkgname = "moar"
-pkgver = "1.30.0"
+pkgver = "1.31.2"
 pkgrel = 0
 build_style = "go"
 make_build_args = [f"-ldflags=-X main.versionString=v{pkgver}"]
@@ -9,7 +9,7 @@ maintainer = "Biswapriyo Nath <nathbappai@gmail.com>"
 license = "BSD-2-Clause"
 url = "https://github.com/walles/moar"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "a26954fca06c95604a94b6f208f62eff247e50c8d239262322a13d0959074de1"
+sha256 = "f88f244c18ee1a8ba1428bc195f9140d53a551124cc8b54c0c7942ba6433e2d7"
 
 
 def install(self):

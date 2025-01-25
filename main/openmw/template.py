@@ -1,6 +1,6 @@
 pkgname = "openmw"
 pkgver = "0.47.0"
-pkgrel = 6
+pkgrel = 8
 build_style = "cmake"
 configure_args = [
     # enable once we have proper qt6 support (0.49)
@@ -24,7 +24,7 @@ makedepends = [
     "openal-soft-devel",
     "openscenegraph-devel",
     "qt6-qtbase-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "unshield-devel",
 ]
 pkgdesc = "Open implementation of Morrowind's engine"

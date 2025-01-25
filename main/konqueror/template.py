@@ -1,5 +1,5 @@
 pkgname = "konqueror"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_args = [
@@ -40,6 +40,7 @@ makedepends = [
     "kwallet-devel",
     "kwindowsystem-devel",
     "plasma-activities-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtwebengine-devel",
     "sonnet-devel",
 ]
@@ -49,7 +50,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "LGPL-3.0-only AND GPL-2.0-or-later"
 url = "https://apps.kde.org/konqueror"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/konqueror-{pkgver}.tar.xz"
-sha256 = "8dea2ff8070830a50daefd3b84882cefb41153a89e25107fe2c621f8d62905d0"
+sha256 = "9d0fb0922b76626fe80492c860a426e6d61bcd68eefbc6276ee72e56b4c1b4d4"
 hardening = ["vis"]
 
 

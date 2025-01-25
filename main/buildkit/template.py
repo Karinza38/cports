@@ -1,5 +1,5 @@
 pkgname = "buildkit"
-pkgver = "0.17.2"
+pkgver = "0.19.0"
 pkgrel = 0
 build_style = "go"
 make_build_args = ["./cmd/..."]
@@ -10,7 +10,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "Apache-2.0"
 url = "https://github.com/moby/buildkit"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "0dce3869150bb6625d05f35b491a66a206f0db4fdc8a688b0bf621b48a11d92a"
+sha256 = "2bc1b4525e7b2beaeba76324c79ce529bf8d2c0ff37b7e2d594acac0a7f88645"
 # cannot work in bwrap
 options = ["!check"]
 

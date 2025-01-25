@@ -1,5 +1,5 @@
 pkgname = "perl-libintl-perl"
-pkgver = "1.33"
+pkgver = "1.35"
 pkgrel = 0
 build_style = "perl_module"
 hostmakedepends = ["perl"]
@@ -10,4 +10,4 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://metacpan.org/dist/libintl-perl"
 source = f"https://cpan.metacpan.org/authors/id/G/GU/GUIDO/libintl-perl-{pkgver}.tar.gz"
-sha256 = "5126eda9ccd0eeb10db82ddef63cbcaf7dbd771e78cc0fb110cc3b5a6b8679e7"
+sha256 = "64abed956aa07d1c8cc816c91cf78642c02faf03ab704ed38031baa07f06b16a"

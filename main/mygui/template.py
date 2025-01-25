@@ -1,6 +1,6 @@
 pkgname = "mygui"
 pkgver = "3.4.2"
-pkgrel = 4
+pkgrel = 6
 build_style = "cmake"
 configure_args = [
     "-DMYGUI_BUILD_DEMOS=OFF",
@@ -13,7 +13,7 @@ makedepends = [
     "freetype-devel",
     "libx11-devel",
     "mesa-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "zlib-ng-compat-devel",
 ]
 pkgdesc = "Fast, flexible and simple GUI"

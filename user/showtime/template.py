@@ -1,6 +1,6 @@
 pkgname = "showtime"
 pkgver = "47.0"
-pkgrel = 0
+pkgrel = 1
 build_style = "meson"
 hostmakedepends = [
     "blueprint-compiler",
@@ -13,11 +13,12 @@ hostmakedepends = [
 makedepends = ["libadwaita-devel"]
 depends = [
     "gst-plugins-base",
+    "gst-plugins-rs-gtk4",
     "libadwaita",
     "python-gobject",
 ]
 pkgdesc = "GNOME video player"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://gitlab.gnome.org/GNOME/Incubator/showtime"
 source = f"{url}/-/archive/{pkgver}.tar.gz"

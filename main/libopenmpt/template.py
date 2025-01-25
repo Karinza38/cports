@@ -1,5 +1,5 @@
 pkgname = "libopenmpt"
-pkgver = "0.7.11"
+pkgver = "0.7.13"
 pkgrel = 0
 build_style = "gnu_configure"
 configure_args = [
@@ -24,7 +24,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "BSD-3-Clause"
 url = "https://lib.openmpt.org/libopenmpt"
 source = f"https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-{pkgver}+release.autotools.tar.gz"
-sha256 = "53a798b8c6e2e1f695e8ad05e93a0c1b53199e5aa9981837c41696b370520767"
+sha256 = "dcd7cde4f9c498eb496c4556e1c1b81353e2a74747e8270a42565117ea42e1f1"
 
 
 def post_install(self):

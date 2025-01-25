@@ -1,5 +1,5 @@
 pkgname = "wasm-tools"
-pkgver = "1.221.2"
+pkgver = "1.223.0"
 pkgrel = 0
 # wasmtime
 archs = ["aarch64", "riscv64", "x86_64"]
@@ -14,7 +14,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
 url = "https://github.com/bytecodealliance/wasm-tools"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "9940c19aa878f500a031282f13401fb6177517a238220246bbcea0d642ee8934"
+sha256 = "bded9fb68df0fa14f80a37609c272c20a9f35b20c897b9900305ccaa3f93d6d2"
 # needs checked out submodules and whatever
 options = ["!check"]
 

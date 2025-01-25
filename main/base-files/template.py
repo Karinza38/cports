@@ -1,8 +1,8 @@
 pkgname = "base-files"
-_iana_ver = "20241122"
+_iana_ver = "20241220"
 pkgver = f"0.1.{_iana_ver}"
-pkgrel = 0
-replaces = ["dinit-chimera<0.99.11-r2"]
+pkgrel = 4
+replaces = ["dinit-chimera<0.99.11-r2", "gcompat<1.1.0-r2"]
 # highest priority dir owner
 replaces_priority = 65535
 pkgdesc = "Chimera Linux base system files"
@@ -58,6 +58,11 @@ def install(self):
     self.install_link("sbin", "usr/bin")
     self.install_link("usr/sbin", "bin")
     self.install_link("usr/local/sbin", "bin")
+    # wordsized stuff
+    libwn = f"lib{self.profile().wordsize}"
+    self.install_link(libwn, "lib")
+    self.install_link(f"usr/{libwn}", "lib")
+    self.install_link(f"usr/local/{libwn}", "lib")
 
     # Users and tmpfiles
     self.install_sysusers(self.files_path / "sysusers.conf")
@@ -65,38 +70,35 @@ def install(self):
     self.install_tmpfiles(self.files_path / "tmp.conf", name="tmp")
     self.install_tmpfiles(self.files_path / "var.conf", name="var")
 
+    # we need apk to install these for now to correctly populate the dbs
+    self.install_file(self.files_path / "etc/group", "etc")
+    self.install_file(self.files_path / "etc/passwd", "etc")
+
     # Mutable files not to be tracked by apk
     for f in [
         "fstab",
         "hosts",
         "issue",
         "nsswitch.conf",
-        "securetty",
-    ]:
-        self.install_file(self.files_path / "etc" / f, "usr/share/base-files")
-
-    # Mutable files to be tracked by apk
-    for f in [
         "profile",
-        "passwd",
-        "group",
+        "profile.path",
     ]:
-        self.install_file(self.files_path / "etc" / f, "etc")
+        self.install_file(self.files_path / "share" / f, "usr/share/base-files")
 
-    # Files that should usually not be changed
+    self.install_file(
+        self.files_path / "share/securetty", "usr/share/pam", mode=0o600
+    )
+
+    # Files that should not be changed
     for f in [
         "chimera-release",
         "os-release",
-        "profile.path",
-        "protocols",
-        "services",
     ]:
-        self.install_file(self.files_path / "etc" / f, "etc")
+        self.install_file(self.files_path / "lib" / f, "usr/lib")
 
-    self.install_dir("etc/profile.d")
-
+    # Systemwide profile snippets
     for f in (self.files_path / "profile.d").glob("*.sh"):
-        self.install_file(f, "etc/profile.d")
+        self.install_file(f, "usr/lib/profile.d")
 
     # Install common licenses
     self.install_dir("usr/share/licenses")
@@ -106,8 +108,12 @@ def install(self):
 
     self.install_bin(self.files_path / "lsb_release")
 
-    # Create /proc/self/mounts -> /etc/mtab symlink
-    self.install_link("etc/mtab", "../proc/self/mounts")
+    # iana etc files
+    for f in [
+        "protocols",
+        "services",
+    ]:
+        self.install_file(self.files_path / "iana" / f, "usr/share/iana")
 
 
 @subpackage("base-devel")

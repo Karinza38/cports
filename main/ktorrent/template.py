@@ -1,5 +1,5 @@
 pkgname = "ktorrent"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_wrapper = ["wlheadless-run", "--"]
@@ -49,7 +49,7 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "GPL-2.0-or-later"
 url = "https://apps.kde.org/ktorrent"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/ktorrent-{pkgver}.tar.xz"
-sha256 = "3705b9bdbd5da51da8a0d006b9a7a6db032e6f7061e22709c1146aa5d17cad40"
+sha256 = "aa0a8858112f73d5bbd59f29e427f1fa97eb168066b83c489431530953cc159d"
 
 if self.profile().arch in ["aarch64", "ppc64le", "x86_64"]:
     makedepends += ["qt6-qtwebengine-devel"]

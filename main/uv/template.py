@@ -1,5 +1,5 @@
 pkgname = "uv"
-pkgver = "0.5.4"
+pkgver = "0.5.21"
 pkgrel = 0
 build_style = "python_pep517"
 hostmakedepends = [
@@ -15,14 +15,17 @@ makedepends = [
     "zstd-devel",
 ]
 pkgdesc = "Python package installer"
-maintainer = "Orphaned <orphaned@chimera-linux.org>"
+maintainer = "ttyyls <contact@behri.org>"
 license = "Apache-2.0 OR MIT"
 url = "https://github.com/astral-sh/uv"
 source = f"{url}/archive/refs/tags/{pkgver}.tar.gz"
-sha256 = "3c1c95bcc99930b929e18665d7691b219ce4bef3555711a9be80139c183b9595"
+sha256 = "a7de0acb9fcdb4dce09d2d16397c91b30cbf653ceeacc30b250df42c9154edbe"
 # too many of them need net
 # completions with host bin
 options = ["!check", "!cross"]
+
+if self.profile().wordsize == 32:
+    broken = "needs atomic64"
 
 
 def post_patch(self):

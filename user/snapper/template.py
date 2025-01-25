@@ -1,5 +1,5 @@
 pkgname = "snapper"
-pkgver = "0.11.2"
+pkgver = "0.12.1"
 pkgrel = 0
 build_style = "gnu_configure"
 configure_args = [
@@ -35,11 +35,11 @@ makedepends = [
     "ncurses-libtinfo-devel",
 ]
 pkgdesc = "Filesystem snapshot manager"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-2.0-only"
 url = "https://github.com/openSUSE/snapper"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "d2a33935f94f30b22aecbdfdecccf651b3616fa698aec266646a9d06043bfd6f"
+sha256 = "eec9de03c8c224ac06e0b2970fde4c37cf89f848b4b49c904e8ee00bb7c3aff3"
 
 
 def post_install(self):

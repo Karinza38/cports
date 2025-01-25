@@ -1,8 +1,9 @@
 pkgname = "freerdp"
-pkgver = "3.9.0"
+pkgver = "3.10.3"
 pkgrel = 0
 build_style = "cmake"
 configure_args = [
+    "-DCMAKE_BUILD_TYPE=Release",
     "-DWITH_ALSA=OFF",
     "-DWITH_CAIRO=ON",
     "-DWITH_CHANNELS=ON",
@@ -18,6 +19,8 @@ configure_args = [
     "-DWITH_WEBVIEW=OFF",
     "-DWITH_X11=ON",
     "-DWITH_ZLIB=ON",
+    "-DWITH_CLIENT_SDL2=ON",
+    "-DWITH_CLIENT_SDL3=OFF",
     "-DWINPR_UTILS_IMAGE_JPEG=ON",
     "-DWINPR_UTILS_IMAGE_PNG=ON",
     "-DWINPR_UTILS_IMAGE_WEBP=ON",
@@ -56,8 +59,8 @@ makedepends = [
     "openssl-devel",
     "pcsc-lite-devel",
     "pkcs11-helper-devel",
-    "sdl-devel",
-    "sdl_ttf-devel",
+    "sdl2-compat-devel",  # no sdl3-ttf yet
+    "sdl2_ttf-devel",
     "uriparser-devel",
     "wayland-devel",
     "zlib-ng-compat-devel",
@@ -67,7 +70,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "Apache-2.0"
 url = "https://www.freerdp.com"
 source = f"https://pub.freerdp.com/releases/freerdp-{pkgver}.tar.gz"
-sha256 = "2eef25f2b421dbe7b6ca64a96045afe57a4b8c559339baca8cb8528c42518b83"
+sha256 = "0bedda4ba1dcb225845522e24c595464aabce2c553a4c08b5c25a4977fbe1831"
 tool_flags = {"CFLAGS": ["-DNDEBUG"]}
 
 

@@ -1,5 +1,5 @@
 pkgname = "libdatachannel"
-pkgver = "0.22.2"
+pkgver = "0.22.4"
 pkgrel = 0
 build_style = "cmake"
 configure_args = [
@@ -25,7 +25,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "MPL-2.0"
 url = "https://libdatachannel.org"
 source = f"https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "8431ba62a3c83fbee05257226fb8bcb256b1a5ce48b449a718e3be5dbe9b2226"
+sha256 = "43eff11d71382aa1e0249aed9729cd744fa91e5cf2410364efa37e006a620454"
 hardening = ["cfi", "vis"]
 # tests seem to need network access (the tests themselves don't seem to work
 # with cfi either; library itself works just fine though)

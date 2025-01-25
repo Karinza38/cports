@@ -1,5 +1,5 @@
 pkgname = "kwindowsystem"
-pkgver = "6.8.0"
+pkgver = "6.10.0"
 pkgrel = 0
 build_style = "cmake"
 make_check_args = [
@@ -24,7 +24,7 @@ hostmakedepends = [
 makedepends = [
     "libxrender-devel",
     "plasma-wayland-protocols",
-    "qt6-qtbase-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtdeclarative-devel",
     "qt6-qttools-devel",
     "qt6-qtwayland-devel",
@@ -42,8 +42,8 @@ pkgdesc = "KDE windowing system access"
 maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "MIT AND (LGPL-2.1-only OR LGPL-3.0-only)"
 url = "https://invent.kde.org/frameworks/kwindowsystem"
-source = f"$(KDE_SITE)/frameworks/{pkgver[:pkgver.rfind('.')]}/kwindowsystem-{pkgver}.tar.xz"
-sha256 = "7b4c520e79c2eb10f98a1d7b4d75633ee90d1873afbadf9f60751e67bc0e2436"
+source = f"$(KDE_SITE)/frameworks/{pkgver[: pkgver.rfind('.')]}/kwindowsystem-{pkgver}.tar.xz"
+sha256 = "046b7aa2247811323e48b629884b824a6ffec475df2316256e7ff0b9df677944"
 hardening = ["vis"]
 
 

@@ -1,5 +1,5 @@
 pkgname = "libkcompactdisc"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 configure_args = ["-DQT_MAJOR_VERSION=6"]
@@ -23,7 +23,7 @@ url = "https://api.kde.org/libkcompactdisc/html"
 source = (
     f"$(KDE_SITE)/release-service/{pkgver}/src/libkcompactdisc-{pkgver}.tar.xz"
 )
-sha256 = "8d54480bf2568a0b799c6631459bf6d1113e2153c1d564aeff3e46fd2c084145"
+sha256 = "d37d48910d4c1662fa329eba60742d13b22bdff46787b13ad5ea67281407941d"
 
 
 @subpackage("libkcompactdisc-devel")

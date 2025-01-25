@@ -1,5 +1,5 @@
 pkgname = "lowdown"
-pkgver = "1.3.0"
+pkgver = "1.4.0"
 pkgrel = 0
 build_style = "configure"
 configure_args = [
@@ -14,8 +14,7 @@ maintainer = "ttyyls <contact@behri.org>"
 license = "ISC"
 url = "https://kristaps.bsd.lv/lowdown"
 source = f"{url}/snapshots/lowdown-{pkgver}.tar.gz"
-sha256 = "e9e157b1a0326f2352880e2f420f1159d227a1c57015ae11ff6f582c5de58418"
-hardening = ["vis", "cfi"]
+sha256 = "75bf8ddc66f6c75ebb64131ced1e729983a38f866a93878fc1753df93330e0ef"
 
 
 def init_configure(self):

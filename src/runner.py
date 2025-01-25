@@ -7,6 +7,7 @@ rtpath = None
 
 global_cfg = None
 cmdline = None
+parser = None
 
 opt_apkcmd = "apk"
 opt_bwcmd = "bwrap"
@@ -53,6 +54,7 @@ opt_updatecheck = False
 opt_acceptsum = False
 opt_maint = "unknown <cports@local>"
 opt_tdata = {}
+opt_nolock = False
 
 #
 # INITIALIZATION ROUTINES
@@ -102,6 +104,7 @@ def handle_options():
 
     global global_cfg
     global cmdline
+    global parser
 
     global opt_apkcmd, opt_bwcmd, opt_dryrun, opt_bulkcont, opt_timing
     global opt_arch, opt_cflags, opt_cxxflags, opt_fflags, opt_tltocache
@@ -111,7 +114,7 @@ def handle_options():
     global opt_nonet, opt_dirty, opt_statusfd, opt_keeptemp, opt_forcecheck
     global opt_checkfail, opt_stage, opt_altrepo, opt_stagepath, opt_bldroot
     global opt_blddir, opt_pkgpath, opt_srcpath, opt_cchpath, opt_updatecheck
-    global opt_acceptsum, opt_comp, opt_maint, opt_epkgs, opt_tdata
+    global opt_acceptsum, opt_comp, opt_maint, opt_epkgs, opt_tdata, opt_nolock
 
     # respect NO_COLOR
     opt_nocolor = ("NO_COLOR" in os.environ) or not sys.stdout.isatty()
@@ -299,6 +302,13 @@ def handle_options():
         const=True,
         default=opt_acceptsum,
         help="Accept mismatched checksums when fetching.",
+    )
+    parser.add_argument(
+        "--no-lock",
+        action="store_const",
+        const=True,
+        default=opt_nolock,
+        help="Do not protect paths with advisory locks (dangerous).",
     )
     parser.add_argument(
         "command",
@@ -823,19 +833,37 @@ def do_keygen(tgt):
 def do_clean(tgt):
     import shutil
 
-    from cbuild.core import paths, errors, chroot
+    from cbuild.core import paths, chroot, template, logger
+
+    ctmpl = cmdline.command[1] if len(cmdline.command) >= 2 else None
+    if ctmpl:
+        tmpl = template.Template(
+            template.sanitize_pkgname(ctmpl),
+            chroot.host_cpu(),
+            True,
+            False,
+            (1, 1),
+            False,
+            False,
+            None,
+            target="lint",
+        )
+    else:
+        tmpl = None
 
     chroot.cleanup_world(None)
-    dirp = paths.builddir() / "builddir"
-    if dirp.is_dir():
-        shutil.rmtree(dirp)
-    elif dirp.exists():
-        raise errors.CbuildException("broken container (builddir invalid)")
-    dirp = paths.builddir() / "destdir"
-    if dirp.is_dir():
-        shutil.rmtree(dirp)
-    elif dirp.exists():
-        raise errors.CbuildException("broken container (destdir invalid)")
+
+    for dirn in ["builddir", "destdir"]:
+        dirp = paths.builddir() / dirn
+        if tmpl:
+            dirp = dirp / f"{tmpl.pkgname}-{tmpl.pkgver}"
+        if not dirp.exists():
+            continue
+        logger.get().out(f"cleaning '{dirp}'...")
+        if dirp.is_dir():
+            shutil.rmtree(dirp)
+        else:
+            dirp.unlink()
 
 
 def do_zap(tgt):
@@ -1702,9 +1730,11 @@ def do_pkg(tgt, pkgn=None, force=None, check=None, stage=None):
         bstage = stage
     if tgt == "invoke-custom":
         if len(cmdline.command) != 3:
-            raise errors.CbuildException(f"{tgt} eneeds two arguments")
+            raise errors.CbuildException(f"{tgt} needs two arguments")
         tgt = "custom:" + cmdline.command[1]
         pkgn = cmdline.command[2]
+    elif tgt == "pkg" and len(cmdline.command) > 2:
+        return do_bulkpkg(tgt)
     elif not pkgn:
         if len(cmdline.command) <= 1 and tgt != "chroot":
             raise errors.CbuildException(f"{tgt} needs a package name")
@@ -1849,11 +1879,13 @@ def _bulkpkg(pkgs, statusf, do_build, do_raw):
         rpkgs.add(npn)
 
     # visited "intermediate" templates, includes stuff that is "to be done"
+    # which will be force-added after base-cbuild is handled, as we don't
+    # want this to influence the graph of base-cbuild
     #
     # ignore minor errors in templates like lint as those do not concern us
     # allow broken because that does not concern us yet either (handled later)
     # do not ignore missing tmpls because that is likely error in main tmpl
-    pvisit = set(rpkgs)
+    pvisit = set()
 
     # this is visited stuff in base-cbuild, we do checks against it later
     # to figure out if to add the implicit base-cbuild "dep" in the topology
@@ -1865,7 +1897,7 @@ def _bulkpkg(pkgs, statusf, do_build, do_raw):
         if do_raw:
             return True
         # add base-cbuild "dependency" for correct implicit sorting
-        if not cbinit and pn not in cbvisit:
+        if not cbinit and pn not in cbvisit and pn != "main/base-cbuild":
             depg.add(pn, "main/base-cbuild")
         # now add the rest of the stuff
         return _add_deps_graph(
@@ -1904,6 +1936,10 @@ def _bulkpkg(pkgs, statusf, do_build, do_raw):
         ),
         True,
     )
+
+    # finally add the "to be done" stuff...
+    for pkg in rpkgs:
+        pvisit.add(pkg)
 
     rpkgs = sorted(rpkgs)
 
@@ -2215,6 +2251,9 @@ def do_prepare_upgrade(tgt):
     )
     oldsha = list(tmpl.sha256)
 
+    # be less confusing with the output
+    tmpl.pkgrel = 0
+
     chroot.prepare_arch(opt_arch, opt_dirty)
     build.build(
         "fetch",
@@ -2261,6 +2300,52 @@ def do_prepare_upgrade(tgt):
     tmpl.log("PACKAGE METADATA UPDATED, now verify everything is correct.")
 
 
+def do_bump_pkgver(tgt):
+    from cbuild.core import chroot, logger, template, errors
+    from cbuild.apk import cli as acli
+    import pathlib
+
+    if len(cmdline.command) != 3:
+        raise errors.CbuildException("bump-pkgver needs a name and a version")
+
+    pkgn = cmdline.command[1]
+    pkgv = cmdline.command[2]
+
+    if not acli.check_version(pkgv):
+        raise errors.CbuildException(f"version '{pkgv}' is invalid")
+
+    try:
+        tmpl = template.Template(
+            template.sanitize_pkgname(pkgn),
+            chroot.host_cpu(),
+            True,
+            False,
+            (1, 1),
+            False,
+            False,
+            None,
+            target="lint",
+        )
+        tmplp = f"{tmpl.full_pkgname}/template.py"
+        tmpl_source = pathlib.Path(tmplp).read_text()
+        with open(tmplp + ".tmp", "w") as outf:
+            for ln in tmpl_source.splitlines():
+                # update pkgver
+                if ln.startswith("pkgver ="):
+                    outf.write(f'pkgver = "{pkgv}"\n')
+                    continue
+                # reset pkgrel to zero
+                if ln.startswith("pkgrel ="):
+                    outf.write("pkgrel = 0\n")
+                    continue
+                outf.write(ln)
+                outf.write("\n")
+        pathlib.Path(tmplp + ".tmp").rename(tmplp)
+        logger.get().out(f"Updated version: {pkgn} {tmpl.pkgver} => {pkgv}")
+    except Exception:
+        logger.get().out(f"\f[orange]WARNING: Failed to update version: {pkgn}")
+
+
 def do_bump_pkgrel(tgt):
     from cbuild.core import chroot, logger, template, errors
     import pathlib
@@ -2300,13 +2385,261 @@ def do_bump_pkgrel(tgt):
             )
 
 
+class InteractiveCompleter:
+    def complete(self, text, state):
+        import pathlib
+        import readline
+        import shlex
+
+        if state == 0:
+            self.matches = []
+            lbuf = readline.get_line_buffer()
+            lbeg = readline.get_begidx()
+            lend = readline.get_endidx()
+            ptext = lbuf[0:lbeg]
+            ctext = lbuf[lbeg:lend]
+            # previously matched a category, so match a template now
+            if ptext.endswith("/"):
+                pcat = shlex.split(ptext)[-1][0:-1]
+                for cat in opt_allowcat.split():
+                    if cat == pcat:
+                        break
+                else:
+                    # no category match
+                    return None
+                # matched category so try to find a template
+                cp = pathlib.Path(pcat)
+                if not cp.is_dir():
+                    return None
+                if "*" not in text:
+                    text += "*"
+                for gl in cp.glob(text):
+                    if gl.is_symlink() or not gl.is_dir():
+                        continue
+                    self.matches.append(gl.name)
+            else:
+                if "alias" in global_cfg:
+                    alias_map = global_cfg["alias"]
+                else:
+                    alias_map = None
+                carr = shlex.split(lbuf)
+                if len(carr) == 0:
+                    ctext = ""
+                else:
+                    ctext = carr[-1]
+                for v in command_handlers:
+                    if not ctext or v.startswith(ctext):
+                        self.matches.append(v.removeprefix(ptext))
+                for v in alias_map:
+                    if not ctext or v.startswith(ctext):
+                        self.matches.append(v.removeprefix(ptext))
+                for v in opt_allowcat.split():
+                    if not ctext or v.startswith(ctext):
+                        self.matches.append(v.removeprefix(ptext) + "/")
+                self.matches.sort()
+        try:
+            return self.matches[state]
+        except IndexError:
+            pass
+        return None
+
+
+def do_commit(tgt):
+    from cbuild.core import errors, chroot, paths, template
+    import subprocess
+    import tempfile
+
+    # filter the args for valid templates
+    copts = []
+    tmpls = []
+
+    for cmd in cmdline.command[1:]:
+        if cmd.startswith("-"):
+            copts.append(cmd)
+        else:
+            tmpls.append(cmd)
+
+    # collect files known to git...
+    subp = subprocess.run(["git", "status", "--porcelain"], capture_output=True)
+    if subp.returncode != 0:
+        raise errors.CbuildException("failed to resolve git changes")
+
+    # track changes in a set so we know what we can pass to commit
+    changes = set()
+    for ln in subp.stdout.splitlines():
+        ln = ln.strip().split(b" ", 1)
+        if len(ln) != 2:
+            continue
+        changes.add(ln[1].decode())
+
+    if len(tmpls) < 1:
+        raise errors.CbuildException("commit needs at least one template")
+
+    hcpu = chroot.host_cpu()
+
+    def build_tmpl(sname, contents):
+        return template.Template(
+            sname,
+            hcpu,
+            True,
+            False,
+            (1, 1),
+            False,
+            False,
+            None,
+            target="lint",
+            contents=contents,
+        )
+
+    # parse everything first so we know stuff's intact, store before calling git
+    tmplos = []
+
+    for tmp in tmpls:
+        # we don't handle template deletion yet... maybe sometime
+        sname = template.sanitize_pkgname(tmp)
+        # try getting the HEAD contents of it
+        relh = str(sname.relative_to(paths.distdir()) / "template.py")
+        subp = subprocess.run(
+            ["git", "show", f"HEAD:{relh}"], capture_output=True
+        )
+        # try building a template object of the old state
+        if subp.returncode == 0:
+            try:
+                otmpl = build_tmpl(sname, subp.stdout.decode())
+            except Exception:
+                # differentiate failure to parse and non-existence
+                otmpl = None
+        else:
+            otmpl = False
+        # build the current contents of it, this has to succeed
+        tmpl = build_tmpl(sname, None)
+        tfiles = {tmpl.full_pkgname}
+        # store
+        tmplos.append((tmpl, otmpl, tfiles))
+
+    ddir = paths.distdir()
+
+    # for each template pair, recreate subpackage symlinks
+    for tmpl, otmpl, tfiles in tmplos:
+        if otmpl:
+            # remove potentially old subpkg symlinks
+            for osp in otmpl.subpkg_list:
+                p = ddir / otmpl.repository / osp.pkgname
+                if not p.exists():
+                    continue
+                p.unlink()
+                tf = f"{otmpl.repository}/{osp.pkgname}"
+                tfiles.add(tf)
+                changes.add(tf)
+        # create new subpkg symlinks
+        for sp in tmpl.subpkg_list:
+            p = ddir / tmpl.repository / sp.pkgname
+            p.unlink(missing_ok=True)
+            p.symlink_to(tmpl.pkgname)
+            tf = f"{tmpl.repository}/{sp.pkgname}"
+            tfiles.add(tf)
+            changes.add(tf)
+
+    # now for each, run git commit...
+    for tmpl, otmpl, tfiles in tmplos:
+        if otmpl is False:
+            # new package
+            msg = f"{tmpl.full_pkgname}: new package"
+        elif not otmpl:
+            # previously failed to parse (fix?)
+            msg = f"{tmpl.full_pkgname}: fix [reason here]"
+        elif otmpl.pkgver != tmpl.pkgver:
+            # new version
+            msg = f"{tmpl.full_pkgname}: update to {tmpl.pkgver}"
+        elif otmpl.pkgrel != tmpl.pkgrel:
+            # revision bump
+            msg = f"{tmpl.full_pkgname}: rebuild for [reason here]"
+        else:
+            # other change
+            msg = f"{tmpl.full_pkgname}: [description here]"
+        # now fill in the rest, build list
+        xl = sorted(tfiles)
+        # make all the files known to git, but don't add them
+        subprocess.run(["git", "add", "-N", *xl], capture_output=True)
+        # and run it
+        with tempfile.NamedTemporaryFile("w", delete_on_close=False) as nf:
+            nf.write(msg)
+            nf.write("\n")
+            nf.close()
+            # allow-empty-message because git is silly and complains if you do not edit
+            subprocess.run(
+                [
+                    "git",
+                    "commit",
+                    "--allow-empty-message",
+                    "-t",
+                    nf.name,
+                    *copts,
+                    *xl,
+                ]
+            )
+
+
+def do_interactive(tgt):
+    import os
+    import shlex
+    import readline
+
+    from cbuild.core import logger
+
+    global cmdline
+
+    readline.set_completer(InteractiveCompleter().complete)
+    # default is something like ' \t\n`~!@#$%^&*()-=+[{]}\\|;:\'",<>/?'
+    readline.set_completer_delims(" \t\n/")
+
+    bkend = "readline"
+    try:
+        bkend = readline.backend
+    except AttributeError:
+        if readline._READLINE_LIBRARY_VERSION.startswith("EditLine"):
+            bkend = "editline"
+
+    if bkend == "readline":
+        readline.parse_and_bind("set editing-mode vi")
+    elif bkend == "editline":
+        readline.parse_and_bind("python:bind -v")
+
+    readline.set_history_length(1000)
+
+    try:
+        if os.path.exists("etc/inputrc"):
+            readline.read_init_file("etc/inputrc")
+        else:
+            readline.read_init_file()
+    except OSError:
+        pass
+
+    if bkend == "readline":
+        readline.parse_and_bind("tab: complete")
+    elif bkend == "editline":
+        readline.parse_and_bind("python:bind ^I rl_complete")
+
+    while True:
+        pmpt = shlex.split(input("cbuild> "))
+        try:
+            cmdline = parser.parse_intermixed_args(pmpt)
+        except SystemExit:
+            logger.get().out("\f[red]cbuild: invalid command line")
+            continue
+        fire_cmd()
+
+
 #
 # MAIN ENTRYPOINT
 #
 
 command_handlers = {
-    "binary-bootstrap": (binary_bootstrap, "Set up the build container"),
-    "bootstrap": (bootstrap, "Bootstrap the build container from scratch"),
+    "binary-bootstrap": (
+        binary_bootstrap,
+        "Set up the build container (alias for bootstrap)",
+    ),
+    "bootstrap": (binary_bootstrap, "Bootstrap the build container"),
     "bootstrap-update": (bootstrap_update, "Update the build container"),
     "build": (do_pkg, "Run up to build phase of a template"),
     "bulk-pkg": (do_bulkpkg, "Perform a bulk build"),
@@ -2319,9 +2652,11 @@ command_handlers = {
         "Perform an unsorted bulk build",
     ),
     "bump-pkgrel": (do_bump_pkgrel, "Increase the pkgrel of a template"),
+    "bump-pkgver": (do_bump_pkgver, "Update the pkgver of a template"),
     "check": (do_pkg, "Run up to check phase of a template"),
     "chroot": (do_pkg, "Enter an interactive bldroot chroot"),
     "clean": (do_clean, "Clean the build directory"),
+    "commit": (do_commit, "Commit the changes in the template"),
     "configure": (do_pkg, "Run up to configure phase of a template"),
     "cycle-check": (
         do_cycle_check,
@@ -2345,7 +2680,7 @@ command_handlers = {
         "Print a newline-separated versioned list of unbuilt templates",
     ),
     "patch": (do_pkg, "Run up to patch phase of a template"),
-    "pkg": (do_pkg, "Build a package"),
+    "pkg": (do_pkg, "Build a package or multiple packages"),
     "prepare": (do_pkg, "Run up to prepare phase of a template"),
     "prepare-upgrade": (
         do_prepare_upgrade,
@@ -2381,6 +2716,10 @@ command_handlers = {
         do_remove_autodeps,
         "Remove build dependencies from bldroot",
     ),
+    "source-bootstrap": (
+        bootstrap,
+        "Bootstrap the build container from scratch",
+    ),
     "unstage": (
         lambda cmd: do_unstage(cmd, opt_force),
         "Unstage local repositories",
@@ -2391,19 +2730,61 @@ command_handlers = {
     ),
     "update-check": (do_update_check, "Check a template for upstream updates"),
     "zap": (do_zap, "Remove the bldroot"),
+    "interactive": (do_interactive, "Enter interactive prompt"),
 }
+
+
+def fire_cmd():
+    import shutil
+    import sys
+
+    from cbuild.core import logger, paths
+
+    retcode = None
+
+    if "alias" in global_cfg:
+        alias_map = global_cfg["alias"]
+    else:
+        alias_map = None
+
+    def bodyf():
+        nonlocal retcode
+        cmd = cmdline.command[0]
+        if "/" in cmd and len(cmdline.command) >= 2:
+            # allow reverse order for commands taking package names
+            ncmd = cmdline.command[1]
+            cmdline.command[0] = ncmd
+            cmdline.command[1] = cmd
+            cmd = ncmd
+        # if aliased, get the rel name
+        if alias_map:
+            cmd = alias_map.get(cmd, fallback=cmd)
+        if cmd in command_handlers:
+            retcode = command_handlers[cmd][0](cmd)
+        else:
+            logger.get().out(f"\f[red]cbuild: invalid target {cmd}")
+            sys.exit(1)
+        return None
+
+    ret, failed = pkg_run_exc(bodyf)
+
+    if opt_mdirtemp and not opt_keeptemp:
+        shutil.rmtree(paths.bldroot())
+
+    return ret, failed, retcode
 
 
 def fire():
     import sys
-    import shutil
     import subprocess
 
     from cbuild.core import build, chroot, logger, template, profile
     from cbuild.core import paths
     from cbuild.apk import cli
+    from cbuild.util import flock
 
     logger.init(not opt_nocolor, opt_timing)
+    flock.set_nolock(opt_nolock)
 
     # set host arch to provide early guarantees
     if opt_harch:
@@ -2459,28 +2840,8 @@ def fire():
 
     build.register_hooks()
     template.register_cats(opt_allowcat.strip().split())
-    retcode = None
 
-    def bodyf():
-        nonlocal retcode
-        cmd = cmdline.command[0]
-        if "/" in cmd and len(cmdline.command) >= 2:
-            # allow reverse order for commands taking package names
-            ncmd = cmdline.command[1]
-            cmdline.command[0] = ncmd
-            cmdline.command[1] = cmd
-            cmd = ncmd
-        if cmd in command_handlers:
-            retcode = command_handlers[cmd][0](cmd)
-        else:
-            logger.get().out(f"\f[red]cbuild: invalid target {cmd}")
-            sys.exit(1)
-        return None
-
-    ret, failed = pkg_run_exc(bodyf)
-
-    if opt_mdirtemp and not opt_keeptemp:
-        shutil.rmtree(paths.bldroot())
+    ret, failed, retcode = fire_cmd()
 
     if failed:
         sys.exit(1)

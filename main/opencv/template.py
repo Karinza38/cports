@@ -1,6 +1,6 @@
 pkgname = "opencv"
-pkgver = "4.10.0"
-pkgrel = 10
+pkgver = "4.11.0"
+pkgrel = 1
 build_style = "cmake"
 configure_args = [
     # rm NDEBUG
@@ -31,7 +31,6 @@ configure_args = [
     "-DWITH_IPP=OFF",
     "-DWITH_OPENCL=ON",
     "-DWITH_OPENGL=ON",
-    "-DWITH_OPENMP=ON",
     "-DWITH_QT=ON",
     "-DWITH_TBB=ON",
     "-DWITH_VA=ON",
@@ -57,7 +56,6 @@ makedepends = [
     "gst-plugins-base-devel",
     "gstreamer-devel",
     "harfbuzz-devel",
-    "libomp-devel",
     "libva-devel",
     "libwebp-devel",
     "libxkbcommon-devel",
@@ -87,8 +85,8 @@ source_paths = [
     "extra-modules",
 ]
 sha256 = [
-    "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9",
-    "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1",
+    "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f",
+    "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041",
 ]
 # insane spam on ppc64le
 tool_flags = {"CXXFLAGS": ["-Wno-deprecate-lax-vec-conv-all"]}
@@ -135,6 +133,9 @@ _libs = [
     "xphoto",
 ]
 
+if self.profile().arch in ["aarch64", "ppc64le", "ppc64", "riscv64", "x86_64"]:
+    configure_args += ["-DWITH_OPENMP=ON"]
+    makedepends += ["libomp-devel"]
 
 match self.profile().arch:
     case "ppc64" | "ppc":
@@ -185,7 +186,7 @@ def init_configure(self):
 
 @subpackage("opencv-devel")
 def _(self):
-    return self.default_devel()
+    return self.default_devel(extra=["usr/share/opencv4/*.supp"])
 
 
 @subpackage("opencv-progs")

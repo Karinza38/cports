@@ -5,9 +5,18 @@ import time
 import fcntl
 from contextlib import contextmanager
 
+no_lock = False
+
+
+def set_nolock(nolock):
+    global no_lock
+    no_lock = nolock
+
 
 @contextmanager
 def lock(path, pkg=None):
+    if no_lock:
+        yield -1
     fd = os.open(path, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
     while True:
         try:
@@ -42,6 +51,10 @@ def apklock(arch):
     if not cpath.is_dir():
         cpath.mkdir(parents=True, exist_ok=True)
     return cpath / f"apk-{arch}.lock"
+
+
+def rootlock():
+    return paths.bldroot() / ".lock"
 
 
 def repolock(arch):

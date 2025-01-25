@@ -1,5 +1,5 @@
 pkgname = "firmware-linux-steamdeck"
-pkgver = "20240813.1"
+pkgver = "20241205.1"
 pkgrel = 0
 archs = ["x86_64"]
 hostmakedepends = ["zstd-progs"]
@@ -9,7 +9,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "custom:linux-firmware"
 url = "https://gitlab.com/evlaV/linux-firmware-neptune"
 source = f"{url}/-/archive/jupiter-{pkgver}/linux-firmware-neptune-jupiter-{pkgver}.tar.gz"
-sha256 = "87a4f144e5ee34d2533e811c9429b2dcb059f8437a4dc77f52030c57c729e3a9"
+sha256 = "50087ceb658b1090c883bcc0135c37a98016b31cab8f22046dd565afedc9d2fa"
 options = ["!strip", "foreignelf", "execstack"]
 
 

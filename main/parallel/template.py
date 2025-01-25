@@ -1,5 +1,5 @@
 pkgname = "parallel"
-pkgver = "20241122"
+pkgver = "20250122"
 pkgrel = 0
 build_style = "gnu_configure"
 hostmakedepends = ["automake"]
@@ -9,4 +9,4 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://www.gnu.org/software/parallel"
 source = f"https://ftp.gnu.org/gnu/parallel/parallel-{pkgver}.tar.bz2"
-sha256 = "1a9e752f42c17ca10bc07d0a63a2ca6edcee532282e55d2b34bd9dd14c978a58"
+sha256 = "03c79e5b346e330cf9e5381c8e5a435fcbcdd08448964676b42f04e199bc8db3"

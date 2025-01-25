@@ -1,5 +1,5 @@
 pkgname = "akonadi-search"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 # sqlite: fails instantly (?)
@@ -41,13 +41,19 @@ url = "https://api.kde.org/kdepim/akonadi-search/html"
 source = (
     f"$(KDE_SITE)/release-service/{pkgver}/src/akonadi-search-{pkgver}.tar.xz"
 )
-sha256 = "63998a1ff695f3be8167bfe6c2619e11765f892248252e05a7bcf0a2bde96068"
+sha256 = "be94ed8c1bdc8c0588c4104929fe9aed04ed77f1fa7ee5315a54f83ff4a8720e"
+
+
+def prepare(self):
+    from cbuild.util import cargo
+
+    cargo.Cargo(self, wrksrc="agent/rs/htmlparser").vendor()
 
 
 def post_patch(self):
     from cbuild.util import cargo
 
-    cargo.Cargo(self, wrksrc="agent/rs/htmlparser").vendor()
+    cargo.clear_vendor_checksums(self, "libc", "agent/rs/htmlparser/vendor")
 
 
 def init_build(self):

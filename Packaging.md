@@ -683,16 +683,12 @@ in a regular system and represent either bootstrap builds of various software
 needed to break dependency cycles in `cbuild` or bootstrap toolchains for
 various programming language compilers.
 
-Every package `foo-bootstrap` gains an implicit dependency on `bootstrap:foo`.
-This package is not provided by anything. Whenever `cbuild` sees a bootstrap
-package in its `hostmakedepends` or `makedepends`, it will implicitly create
-a virtual package in the current build environment to allow such package to
-be installed.
+Every package `foo-bootstrap` gains an implicit dependency on `bootstrap:cbuild`.
 
-You can do so in your own environment like such:
+You can set up a virtual `bootstrap:cbuild` in your own environment:
 
 ```
-$ apk add --virtual bootstrap:foo
+$ apk add --virtual bootstrap:cbuild
 ```
 
 <a id="template_structure"></a>
@@ -1787,6 +1783,10 @@ the template including for subpackages:
   on to make profiling of resultant binaries easier.
 * `fullrustflags` *(false)* If enabled, RUSTFLAGS will also contain
   the same optimisation flags that are normally set for cargo only.
+* `sanruntime` *(false)* If enabled, the full sanitizer runtime will
+  be linked in and the code will be compiled without trapping. This allows
+  for better diagnostics for debugging hardening issues, but should not
+  be used in final packages.
 
 The following options apply to a single package and need to be specified
 for subpackages separately if needed:
@@ -2888,7 +2888,7 @@ This is useful if you have e.g. some personal authentication token needed
 to fetch particular sources, and you do not want to paste the token directly
 to the template.
 
-##### def do(self, cmd, *args, env = None, wrksrc = None, capture_output = False, stdout = None, stderr = None, input = None, check = True, allow_network = False, path = None)
+##### def do(self, cmd, *args, env = None, wrksrc = None, capture_output = False, stdout = None, stderr = None, input = None, check = True, allow_network = False, path = None, tmpfiles = None)
 
 Execute a command in the build container, sandboxed. Does not spawn a shell,
 instead directly runs `cmd`, passing it `*args`. You can use `env` to provide
@@ -2926,6 +2926,10 @@ that if needed.
 
 The `stdout` and `stderr` arguments work the same as for Python `subprocess.run`,
 likewise with `input`.
+
+The `tmpfiles` argument can be a list of `pathlib.Path` specifying host-filesystem
+file paths to be bound into the sandbox in `/tmp`. The target filenames will be
+the same as the source filenames.
 
 The return value is the same as from Python `subprocess.run`. There you can
 access the return code as well as possibly captured `stdout`.
@@ -3021,12 +3025,17 @@ by the template or defaults, and it must be supported for the target.
 
 The `target` argument is the same as for `profile()`.
 
-##### def has_lto(self, target = None)
+##### def has_lto(self, target = None, force = False)
 
 Check if the current configuration (i.e. taking into account the template
 as well as the current profile or the `target`) is going to LTO the
 build. This will be `True` if the template does not disable it, and
 if the stage is at least 2 and the profile supports it.
+
+If `force` is set, then the `options` are ignored and only the profile
+is checked for the current stage. This is useful for checks at template
+level where options are not yet initialized, or for checking if LTO
+is available for the profile regardless of whether disabled.
 
 ##### def can_lto(self, target = None)
 
@@ -3213,7 +3222,8 @@ This additionally supports prefix-style shorthand values, e.g. instead
 of `usr/bin/foo*` you can write `cmd:foo*`. The currently supported
 prefixes are `cmd:`, `lib:` and `man:`; `man:` automatically resolves
 the category, e.g. `man:foo.1` will take `usr/share/man/man1/foo.1`,
-and `cmd:` will also take any associated manpage in either `man1` or `man8`.
+and `cmd:` will also take any associated manpage in either `man1` or `man8`
+as well as known shell completions.
 
 You will want to use this if you return a function from the subpackage
 function. The following are equivalent:

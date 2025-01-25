@@ -1,5 +1,5 @@
 pkgname = "gstreamer-vaapi"
-pkgver = "1.24.9"
+pkgver = "1.24.11"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
@@ -29,4 +29,4 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "LGPL-2.1-or-later"
 url = "https://gstreamer.freedesktop.org"
 source = f"{url}/src/gstreamer-vaapi/gstreamer-vaapi-{pkgver}.tar.xz"
-sha256 = "c2373e9b4d6655535d355207f60084b0fb3b28566fe9bb4ca1da714439da4ae1"
+sha256 = "e85904a47d9ecb41d7f76b1d3fe887fa18c0b81a3793e7d7f61361ea7e90420d"

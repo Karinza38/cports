@@ -1,10 +1,10 @@
 pkgname = "clang-rt-cross"
-pkgver = "19.1.4"
+pkgver = "19.1.7"
 pkgrel = 0
 build_style = "cmake"
 configure_args = [
     "-DCMAKE_BUILD_TYPE=Release",
-    f"-DCMAKE_INSTALL_PREFIX=/usr/lib/clang/{pkgver[0:pkgver.find('.')]}",
+    f"-DCMAKE_INSTALL_PREFIX=/usr/lib/clang/{pkgver[0 : pkgver.find('.')]}",
     "-DCOMPILER_RT_USE_BUILTINS_LIBRARY=ON",
     # only build that target
     "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
@@ -51,7 +51,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "Apache-2.0 WITH LLVM-exception AND NCSA"
 url = "https://llvm.org"
 source = f"https://github.com/llvm/llvm-project/releases/download/llvmorg-{pkgver}/llvm-project-{pkgver}.src.tar.xz"
-sha256 = "3aa2d2d2c7553164ad5c6f3b932b31816e422635e18620c9349a7da95b98d811"
+sha256 = "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501"
 # crosstoolchain
 options = ["!cross", "!check", "!lto", "empty"]
 
@@ -121,14 +121,15 @@ def install(self):
     # we don't need or want these for cross
     with self.pushd(self.destdir):
         self.rm(
-            f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/share", recursive=True
-        )
-        self.rm(
-            f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/include",
+            f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/share",
             recursive=True,
         )
         self.rm(
-            f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/bin", recursive=True
+            f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/include",
+            recursive=True,
+        )
+        self.rm(
+            f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/bin", recursive=True
         )
 
 
@@ -148,7 +149,7 @@ def _gen_subp(an):
         ]
         with self.rparent.profile(an) as pf:
             return [
-                f"usr/lib/clang/{pkgver[0:pkgver.find('.')]}/lib/{pf.triplet}"
+                f"usr/lib/clang/{pkgver[0 : pkgver.find('.')]}/lib/{pf.triplet}"
             ]
 
     if an in _targets:

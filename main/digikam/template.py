@@ -1,6 +1,6 @@
 pkgname = "digikam"
 pkgver = "8.5.0"
-pkgrel = 0
+pkgrel = 3
 build_style = "cmake"
 configure_args = [
     "-DBUILD_TESTING=ON",
@@ -52,13 +52,12 @@ makedepends = [
     "libjxl-devel",
     "libksane-devel",
     "libmagick-devel",
-    "libomp-devel",
     "libpng-devel",
     "libtiff-devel",
     "libxml2-devel",
     "libxslt-devel",
     "opencv-devel",
-    "qt6-qtbase-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtdeclarative-devel",
     "qt6-qtmultimedia-devel",
     "qt6-qtnetworkauth-devel",
@@ -91,6 +90,9 @@ tool_flags = {
 }
 # a bunch of them fail with some mediawiki header check
 options = ["!check"]
+
+if self.profile().arch in ["aarch64", "ppc64le", "ppc64", "riscv64", "x86_64"]:
+    makedepends += ["libomp-devel"]
 
 
 @subpackage("digikam-devel")

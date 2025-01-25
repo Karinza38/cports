@@ -1,5 +1,5 @@
 pkgname = "kdebugsettings"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_wrapper = ["wlheadless-run", "--"]
@@ -13,6 +13,7 @@ hostmakedepends = [
 makedepends = [
     "kcoreaddons-devel",
     "kconfig-devel",
+    "kcrash-devel",
     "kdbusaddons-devel",
     "ki18n-devel",
     "kiconthemes-devel",
@@ -29,4 +30,4 @@ url = "https://apps.kde.org/kdebugsettings"
 source = (
     f"$(KDE_SITE)/release-service/{pkgver}/src/kdebugsettings-{pkgver}.tar.xz"
 )
-sha256 = "4ef7cc06350e36db9b8b09b512e2559f7e5b3cc489b1715ff41207b11c2881c8"
+sha256 = "76c1dd1d06a29e9a39299e2d2778c035bf0f5ea05065a43ab250eba3c8cf2a75"

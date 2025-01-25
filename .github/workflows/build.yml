@@ -19,7 +19,13 @@ env:
 jobs:
   build:
     name: Build packages
-    runs-on: ubuntu-24.04
+
+    strategy:
+        matrix:
+            runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        fail-fast: false
+
+    runs-on: ${{ matrix.runner }}
     if: "!contains(github.event.pull_request.title, '[ci skip]') && !contains(github.event.pull_request.body, '[ci skip]')"
 
     env:
@@ -40,16 +46,11 @@ jobs:
           sudo sysctl kernel.apparmor_restrict_unprivileged_unconfined=0
           sudo sysctl kernel.apparmor_restrict_unprivileged_userns=0
 
-      - name: Install python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
       - name: Install dependencies
         run: |
           sudo rm -f /var/lib/man-db/auto-update
           sudo apt-get update
-          sudo apt-get install --no-install-recommends ca-certificates openssl git bubblewrap wget
+          sudo apt-get install --no-install-recommends python3 ca-certificates openssl git bubblewrap wget
 
       - name: Restore cbuild cache
         id: cache-cbuild

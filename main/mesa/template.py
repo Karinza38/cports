@@ -1,11 +1,10 @@
 pkgname = "mesa"
-pkgver = "24.2.8"
+pkgver = "24.3.4"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
     "-Db_ndebug=true",
     "-Ddefault_library=shared",
-    "-Ddri3=enabled",
     "-Degl=enabled",
     "-Dgbm=enabled",
     "-Dgles1=enabled",
@@ -18,6 +17,7 @@ configure_args = [
     "-Dplatforms=x11,wayland",
     "-Dshared-glapi=enabled",
     "-Dvideo-codecs=all",
+    "-Dgallium-vdpau=disabled",
 ]
 hostmakedepends = [
     "bison",
@@ -65,6 +65,7 @@ makedepends = [
     # video accel
     "libva-bootstrap",
 ]
+provider_priority = 999
 pkgdesc = "Mesa 3D Graphics Library"
 maintainer = "q66 <q66@chimera-linux.org>"
 license = "MIT"
@@ -88,7 +89,7 @@ _subproject_list = [
     "unicode-ident",
 ]
 source = f"https://mesa.freedesktop.org/archive/mesa-{pkgver.replace('_', '-')}.tar.xz"
-sha256 = "999d0a854f43864fc098266aaf25600ce7961318a1e2e358bff94a7f53580e30"
+sha256 = "e641ae27191d387599219694560d221b7feaa91c900bcec46bf444218ed66025"
 # lots of issues in swrast and so on
 hardening = ["!int"]
 # cba to deal with cross patching nonsense
@@ -209,9 +210,9 @@ if _have_opencl or _have_nvidia:
     makedepends += ["rust"]
 
 if _have_hwdec:
-    configure_args += ["-Dgallium-vdpau=disabled", "-Dgallium-va=enabled"]
+    configure_args += ["-Dgallium-va=enabled"]
 else:
-    configure_args += ["-Dgallium-vdpau=disabled", "-Dgallium-va=disabled"]
+    configure_args += ["-Dgallium-va=disabled"]
 
 if _have_vulkan:
     makedepends += ["vulkan-loader-devel"]
@@ -264,8 +265,12 @@ def _(self):
 def _(self):
     self.pkgdesc = "Generic Buffer Management"
     self.subdesc = "runtime library"
+    self.depends += [self.parent]
 
-    return ["usr/lib/libgbm.so.*"]
+    return [
+        "usr/lib/gbm",
+        "usr/lib/libgbm.so.*",
+    ]
 
 
 @subpackage("libgbm-devel")
@@ -328,6 +333,7 @@ def _(self):
 def _(self):
     self.pkgdesc = "X acceleration library"
     self.subdesc = "runtime library"
+    self.depends += [self.parent]
 
     return ["usr/lib/libxatracker*.so.*"]
 
@@ -335,6 +341,7 @@ def _(self):
 @subpackage("mesa-gallium-nine", _have_nine)
 def _(self):
     self.pkgdesc = "Mesa implementation of D3D9"
+    self.depends += [self.parent]
 
     return ["usr/lib/d3d"]
 
@@ -342,7 +349,7 @@ def _(self):
 @subpackage("mesa-opencl", _have_opencl)
 def _(self):
     self.pkgdesc = "Mesa implementation of OpenCL"
-    self.depends += ["libclc"]
+    self.depends += [self.parent, "libclc"]
 
     return [
         "etc/OpenCL",
@@ -355,12 +362,15 @@ def _(self):
 @subpackage("mesa-libgallium")
 def _(self):
     self.pkgdesc = "Mesa gallium loader"
+    self.depends += [self.parent]
+
     return ["usr/lib/libgallium-*.so"]
 
 
 @subpackage("mesa-dri")
 def _(self):
     self.pkgdesc = "Mesa DRI drivers"
+    self.depends += [self.parent]
     self.install_if = [self.parent]
     # transitional
     self.provides = [self.with_pkgver("mesa-vaapi")]
@@ -371,6 +381,7 @@ def _(self):
 @subpackage("mesa-vulkan", _have_vulkan)
 def _(self):
     self.pkgdesc = "Mesa Vulkan drivers"
+    self.depends += [self.parent]
     self.install_if = [self.with_pkgver("mesa-dri"), "vulkan-loader"]
 
     return [
@@ -386,6 +397,6 @@ def _(self):
 
 @subpackage("mesa-devel")
 def _(self):
-    self.depends += ["libgbm-devel"]
+    self.depends += [self.parent, self.with_pkgver("libgbm-devel")]
 
     return self.default_devel()

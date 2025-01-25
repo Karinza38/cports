@@ -1,5 +1,5 @@
 pkgname = "glslang"
-pkgver = "15.0.0"
+pkgver = "15.1.0"
 pkgrel = 1
 build_style = "cmake"
 configure_args = [
@@ -15,7 +15,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "BSD-3-Clause"
 url = "https://github.com/KhronosGroup/glslang"
 source = f"{url}/archive/{pkgver}.tar.gz"
-sha256 = "c31c8c2e89af907507c0631273989526ee7d5cdf7df95ececd628fd7b811e064"
+sha256 = "4bdcd8cdb330313f0d4deed7be527b0ac1c115ff272e492853a6e98add61b4bc"
 # FIXME: tests reveal a suboverflow in TIntermConstantUnion::fold that should be fixed
 hardening = ["!int"]
 

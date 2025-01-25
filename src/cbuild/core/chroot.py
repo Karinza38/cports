@@ -142,14 +142,14 @@ def _prepare():
         "../usr/share/zoneinfo/UTC"
     )
 
-    if (paths.bldroot() / "usr/bin/update-ca-certificates").is_file():
-        enter("update-ca-certificates", "--fresh")
-
     _prepare_etc()
 
     # Create temporary files for the chroot
     if (paths.bldroot() / "usr/bin/sd-tmpfiles").is_file():
         enter("sd-tmpfiles", "--create", fakeroot=True)
+
+    if (paths.bldroot() / "usr/bin/update-ca-certificates").is_file():
+        enter("update-ca-certificates")
 
     with open(sfpath, "w") as sf:
         sf.write(host_cpu() + "\n")
@@ -635,7 +635,7 @@ def enter(
     fakeroot=False,
     new_session=True,
     binpkgs_rw=False,
-    signkey=None,
+    tmpfiles=None,
     binpath=None,
     lldargs=None,
     term=False,
@@ -806,11 +806,11 @@ def enter(
     # extra file descriptors to pass to sandbox and bind to a file
     fdlist = []
 
-    if signkey:
+    for tmpf in tmpfiles or []:
         # reopen as file descriptor to pass
-        signfd = os.open(signkey, os.O_RDONLY)
-        fdlist.append(signfd)
-        bcmd += ["--ro-bind-data", str(signfd), f"/tmp/{signkey.name}"]
+        tmpfd = os.open(tmpf, os.O_RDONLY)
+        fdlist.append(tmpfd)
+        bcmd += ["--ro-bind-data", str(tmpfd), f"/tmp/{tmpf.name}"]
 
     if lldargs:
         rfd, wfd = os.pipe()

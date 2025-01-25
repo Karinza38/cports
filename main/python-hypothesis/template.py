@@ -1,5 +1,5 @@
 pkgname = "python-hypothesis"
-pkgver = "6.122.1"
+pkgver = "6.124.1"
 pkgrel = 0
 build_wrksrc = "hypothesis-python"
 build_style = "python_pep517"
@@ -26,7 +26,7 @@ maintainer = "Duncan Bellamy <dunk@denkimushi.com>"
 license = "MPL-2.0"
 url = "https://hypothesis.works/index.html"
 source = f"https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/hypothesis-python-{pkgver}.tar.gz"
-sha256 = "6b8e830d02e88f228a7e4ecd58a8bf7592a31da038c6703130d27e3a75581ee1"
+sha256 = "4365f3d5be68d4118b995946864a50cf3ed454de53fd858a9018e8c177ee8a22"
 
 
 def init_check(self):
@@ -44,6 +44,7 @@ def init_check(self):
         "--ignore=tests/codemods/test_codemod_cli.py",
         "--ignore=tests/pandas",
         "--ignore=tests/numpy",
+        "--ignore=tests/crosshair",
         "-k",
         # XXX: fails because posix/ tzdata folder doesn't exist
         "not test_can_generate_prefixes_if_allowed_and_available",

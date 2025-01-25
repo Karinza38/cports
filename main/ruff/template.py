@@ -1,5 +1,5 @@
 pkgname = "ruff"
-pkgver = "0.8.0"
+pkgver = "0.9.1"
 pkgrel = 0
 build_style = "python_pep517"
 hostmakedepends = [
@@ -15,14 +15,17 @@ makedepends = [
 ]
 depends = ["python"]
 pkgdesc = "Python formatter and linter"
-maintainer = "Orphaned <orphaned@chimera-linux.org>"
+maintainer = "triallax <triallax@tutanota.com>"
 license = "MIT"
 url = "https://docs.astral.sh/ruff"
 source = f"https://github.com/astral-sh/ruff/archive/refs/tags/{pkgver}.tar.gz"
-sha256 = "d2c112522b978a5d8938a98c916f61d3f77553545dce116bded3b7156209a138"
+sha256 = "661c71f5884476eda3af5143141ab71eec948514c4918cc2cfa75f2ece404d4e"
 # generates completions with host bin
 # tests are mostly a waste of time
 options = ["!cross", "!check"]
+
+if self.profile().wordsize == 32:
+    broken = "requires atomic64"
 
 
 def post_patch(self):

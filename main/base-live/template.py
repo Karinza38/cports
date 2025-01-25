@@ -1,21 +1,19 @@
 pkgname = "base-live"
 pkgver = "0.1"
-pkgrel = 0
+pkgrel = 2
 build_style = "meta"
 depends = [
     "cryptsetup-scripts",
     "device-mapper",
     "firmware-linux-soc",
     "lvm2",
-    "mtools",
-    "xorriso",
 ]
 pkgdesc = "Packages to be included in official live images"
 maintainer = "q66 <q66@chimera-linux.org>"
 license = "custom:meta"
 url = "https://chimera-linux.org"
 
-
+# grub for local installations without net access
 match self.profile().arch:
     case "aarch64":
         depends += ["grub-arm64-efi"]
@@ -25,3 +23,7 @@ match self.profile().arch:
         depends += ["grub-riscv64-efi"]
     case "x86_64":
         depends += ["grub-i386-efi", "grub-i386-pc", "grub-x86_64-efi"]
+
+# extra bootloaders on efi targets, again for offline install
+if self.profile().arch in ["aarch64", "riscv64", "x86_64"]:
+    depends += ["limine", "systemd-boot"]

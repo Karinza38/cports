@@ -20,11 +20,14 @@ makedepends = [
 ]
 depends = ["transmission-daemon"]
 pkgdesc = "BitTorrent client for the GNOME desktop environment"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://gitlab.gnome.org/World/Fragments"
 source = f"{url}/-/archive/{pkgver}/Fragments-{pkgver}.tar.gz"
 sha256 = "33b9b68a85450288e930fcbcf1af0fcf3f630e3493f5e8784f05f4e32620703f"
+
+if self.profile().wordsize == 32:
+    broken = "needs atomic64"
 
 
 def post_patch(self):

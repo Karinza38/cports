@@ -1,6 +1,6 @@
 pkgname = "pango"
-pkgver = "1.54.0"
-pkgrel = 4
+pkgver = "1.56.1"
+pkgrel = 0
 build_style = "meson"
 configure_args = [
     "-Dintrospection=enabled",
@@ -31,9 +31,9 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "LGPL-2.1-or-later"
 url = "https://www.pango.org"
 source = (
-    f"$(GNOME_SITE)/pango/{pkgver[:pkgver.rfind('.')]}/pango-{pkgver}.tar.xz"
+    f"$(GNOME_SITE)/pango/{pkgver[: pkgver.rfind('.')]}/pango-{pkgver}.tar.xz"
 )
-sha256 = "8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8"
+sha256 = "426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480"
 # subtly breaks various things
 hardening = ["!int"]
 
@@ -49,7 +49,7 @@ def _(self):
 def _(self):
     self.subdesc = "utility to view pango files"
 
-    return ["usr/bin/pango-view", "usr/share/man/man1/pango-view.1"]
+    return ["cmd:pango-view"]
 
 
 @subpackage("pango-devel")

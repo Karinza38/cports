@@ -1,7 +1,7 @@
 pkgname = "cargo"
-pkgver = "1.83.0"
+pkgver = "1.84.0"
 _cargover = f"0.{int(pkgver[2:4]) + 1}.{pkgver[5:]}"
-pkgrel = 0
+pkgrel = 1
 build_style = "cargo"
 # PKG_CONFIG being in environment mysteriously brings target sysroot
 # into linker sequence for build script, breaking build entirely
@@ -14,13 +14,13 @@ hostmakedepends = [
     "python",
     "zlib-ng-compat-devel",
 ]
-makedepends = ["libcurl-devel", "openssl-devel", "sqlite-devel"]
+makedepends = ["curl-devel", "openssl-devel", "sqlite-devel"]
 pkgdesc = "Rust package manager"
 maintainer = "q66 <q66@chimera-linux.org>"
 license = "MIT OR Apache-2.0"
 url = "https://rust-lang.org"
 source = f"https://github.com/rust-lang/cargo/archive/{_cargover}.tar.gz"
-sha256 = "8d01b3cba1150ae34e5faec59894a9d4e9b46942b082f2bd4ed441ce417ed979"
+sha256 = "5e708627470d41be5d615b0f064d5cbe40509cab62e751a2876936fb53ca0bcd"
 # global environment
 env = {
     "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt",

@@ -1,5 +1,5 @@
 pkgname = "kio"
-pkgver = "6.8.0"
+pkgver = "6.10.0"
 pkgrel = 0
 build_style = "cmake"
 # flaky
@@ -36,6 +36,7 @@ makedepends = [
     "kwindowsystem-devel",
     "libxslt-devel",
     "qt6-qt5compat-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtdeclarative-devel",
     "qt6-qttools-devel",
     "solid-devel",
@@ -49,9 +50,9 @@ license = (
 )
 url = "https://api.kde.org/frameworks/kio/html"
 source = (
-    f"$(KDE_SITE)/frameworks/{pkgver[:pkgver.rfind('.')]}/kio-{pkgver}.tar.xz"
+    f"$(KDE_SITE)/frameworks/{pkgver[: pkgver.rfind('.')]}/kio-{pkgver}.tar.xz"
 )
-sha256 = "cb8ac25a5324e8b617817feefcdf7739eb20dc35dcf4444b886c1dcbb99a56be"
+sha256 = "7eb454438f149e7ed513c3bbd526b67e3e3ecfe32ae7c986168baa59600b699c"
 tool_flags = {"LDFLAGS": ["-Wl,-z,stack-size=0x200000"]}
 hardening = ["vis"]
 # >60% (40/62) tests fail, pain to get working in a limited enviroment due to expecting e.g. real disks

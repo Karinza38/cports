@@ -1,5 +1,5 @@
 pkgname = "kpkpass"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 hostmakedepends = [
@@ -19,7 +19,7 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "LGPL-2.0-or-later"
 url = "https://api.kde.org/kdepim/kpkpass/html"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/kpkpass-{pkgver}.tar.xz"
-sha256 = "bace2a9d11d712d5a5b9f1e61c13b33ae450a29db730de807597e4ccec43ea48"
+sha256 = "7d8b986e5a314b4b755f543a8dd63fdb5b7ff1fe88ba59678f3a149691ff38c3"
 
 
 @subpackage("kpkpass-devel")

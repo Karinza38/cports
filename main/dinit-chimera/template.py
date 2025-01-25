@@ -1,13 +1,18 @@
 pkgname = "dinit-chimera"
-pkgver = "0.99.15"
-pkgrel = 1
+pkgver = "0.99.17"
+pkgrel = 0
 build_style = "meson"
 configure_args = [
     "--libexecdir=/usr/lib",  # XXX drop libexec
     "-Ddefault-path-env=/usr/bin",
 ]
 hostmakedepends = ["meson", "pkgconf"]
-makedepends = ["libkmod-devel", "linux-headers"]
+makedepends = [
+    "libdinitctl-devel",
+    "libkmod-devel",
+    "linux-headers",
+    "udev-devel",
+]
 depends = [
     "dinit",
     "tzdata",
@@ -35,7 +40,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "BSD-2-Clause"
 url = "https://github.com/chimera-linux/dinit-chimera"
 source = f"https://github.com/chimera-linux/dinit-chimera/archive/tags/v{pkgver}.tar.gz"
-sha256 = "c88f734bbdb7e926bd1167ed9b1844fff7b20cc7289ccbbb32940422fa18b951"
+sha256 = "18a1120b5fd7967a4de6c8614490d9a8abb84e371b1bb55429490baccab64542"
 hardening = ["vis", "cfi"]
 options = ["brokenlinks"]
 
@@ -51,7 +56,6 @@ _have_kexec_tools = self.profile().arch in [
 
 def post_install(self):
     self.install_license("COPYING.md")
-    self.install_file("^/locale.conf", "etc")
     self.install_tmpfiles("^/dinit.conf", name="dinit")
     self.install_tmpfiles("^/utmp.conf", name="utmp")
     self.install_file("^/sd-tmpfiles-clean", "usr/lib", mode=0o755)

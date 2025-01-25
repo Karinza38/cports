@@ -12,7 +12,7 @@ more specifically its `cbuild` component.
   * [Preparing](#preparing)
   * [Build Root Setup](#root_setup)
   * [Building a Package](#building_package)
-* [Bootstrapping](#bootstrapping)
+* [Bootstrapping From Source](#bootstrapping)
   * [Bootstrap Requirements](#bootstrap_requirements)
   * [Bootstrap Process](#bootstrap_process)
 * [Cbuild Reference](#cbuild_reference)
@@ -214,7 +214,7 @@ The easiest way to bring up a build container is from binary packages, like
 this:
 
 ```
-$ ./cbuild binary-bootstrap
+$ ./cbuild bootstrap
 ```
 
 By default, this will be `bldroot` inside your `cports` directory. If you have
@@ -250,13 +250,15 @@ metadata and routines declared in the template.
 That's it!
 
 <a id="bootstrapping"></a>
-## Bootstrapping
+## Bootstrapping From Source
 
-By this, it is meant bootstrapping from source. This is an alternative to binary
-bootstrap, if you wish to compile the whole system from source. Keep in mind that
-this takes a long time, because it has to rebuild the whole bootstrap path 4 times.
+This is an alternative to binary bootstrap, if you wish to compile the whole
+system from source. Keep in mind that this takes a long time, because it has
+to rebuild the whole bootstrap path 4 times.
 
-Bootstrapping has more requirements than simply using the system.
+Bootstrapping has more requirements than simply using the system. It is also
+not guaranteed to work at all times, as we do not check it regularly. Most users
+should stick with bootstrapping from packages.
 
 <a id="bootstrap_requirements"></a>
 ### Bootstrap Requirements
@@ -297,11 +299,11 @@ Chimera uses a 4-stage bootstrap process. It is largely automatic and hidden
 from you. You can invoke it like:
 
 ```
-$ ./cbuild bootstrap
+$ ./cbuild source-bootstrap
 ```
 
 Optionally you can stop the process at a specific stage by passing its number
-as an argument (not when using `bootstrap.sh`).
+as an argument.
 
 To explain what's going on:
 
@@ -338,7 +340,7 @@ You will have the following artifacts:
   built on the host system.
 * `bldroot-stage1` is the build root assembled from stage 1 packages.
 * `bldroot-stage2` is the build root assembled from stage 2 packages.
-* `bldroot` is the final build root; if you remove it and `binary-bootstrap`,
+* `bldroot` is the final build root; if you remove it and `bootstrap`,
   you will get the same thing.
 * `packages-stage0` is the repository of packages `bldroot-stage0` is created
   from.
@@ -363,7 +365,7 @@ are identical to regular builds without source bootstrap.
 This is done by pre-bootstrapping a stage 0 environment from binaries:
 
 ```
-$ ./cbuild -b bldroot-stage0 binary-bootstrap
+$ ./cbuild -b bldroot-stage0 bootstrap
 ```
 
 Also see the note about certificates in the "Build Root Setup" section.
@@ -478,12 +480,9 @@ only have an effect with specific commands.
 
 The following commands are recognized:
 
-* `binary-bootstrap` Create a build root from local packages. The local
-  repository must be populated, or a sufficient remote repository must be
-  available.
-* `bootstrap [STAGE]` Bootstrap from source. If `STAGE` is passed, stop at that
-  stage (number). By default, that is `2`. Stage 0 bootstrap must be run in a
-  compatible host system.
+* `bootstrap` Create a build root from packages. The local repository must
+  be populated, or a sufficient remote repository must be available. An older
+  alias `binary-bootstrap` is available as well.
 * `bootstrap-update` Update the packages in your build root to latest.
   Acts like `binary-bootstrap` if the `bldroot` does not exist.
 * `bulk-pkg` Given a list of bulk expressions (may be zero, see below), perform
@@ -522,6 +521,8 @@ The following commands are recognized:
   built in the order that is given.
 * `bump-pkgrel` Given a list of template names (at least one), increase
   the `pkgrel` number by one for each.
+* `bump-pkgver` Given a template name and a valid apk version, update the
+  `pkgver` of the template to that version.
 * `chroot` Enter the build root with an interactive shell. In this environment,
   the root is mostly unsandboxed, i.e. writable and with network access. You
   can use this kind of environment for quick testing, as well as entering failed
@@ -529,7 +530,11 @@ The following commands are recognized:
   pass a template name and then it will start inside the template's build
   directory if it exists (or `/builddir` if not).
 * `clean` Clean up the build root. This means removing automatic dependencies
-  and removing `builddir` and `destdir` within.
+  and removing `builddir` and `destdir` within. When given a template name,
+  it will only clean the directories for that template.
+* `commit` Commit a given template or templates. Currently, only individual
+  templates are supported, and one commit will be generated for each. Any
+  optional arguments after `--` will be passed to `git commit` directly.
 * `cycle-check` Scan all templates or a single template for build-time
   dependency cycles. Only one cycle at a time is printed. The goal is to
   keep the tree free of cycles at all times. Therefore, if you encounter
@@ -545,11 +550,14 @@ The following commands are recognized:
   date version of the package already exists in the local repository, unless
   overridden with `-f` or `--force`, when using the "pkg" target. Other
   targets will run always unless already finished in builddir (you can
-  make them always run regardless by passing `-f` or `--force`).
+  make them always run regardless by passing `-f` or `--force`). Passing
+  multiple packages to `pkg` is a special case and is an alias for `bulk-pkg`.
 * `index` When not given a path, reindex all known repositories. When given
   a path, reindex a specific repository. Only either the host architecture or
   the `-a` architecture are indexed, and the path should not include the
   architecture.
+* `interactive` Enter a prompt where `cbuild` commands can be entered.
+  They take the same syntax as always, just without explicitly calling `cbuild`.
 * `invoke-custom` Takes a target name and a package. Invokes a custom-defined
   template-specific target function. Typically used to handle logic for
   generation of bootstrap bindists, kernel config refresh, and the likes.
@@ -602,6 +610,9 @@ The following commands are recognized:
   (not containing templates) and files.
 * `remove-autodeps` Remove automatic dependencies possibly installed in the
   build root.
+* `source-bootstrap [STAGE]` Bootstrap from source. If `STAGE` is passed, stop
+  at that stage (number). By default, that is `2`. Stage 0 bootstrap must be
+  run in a compatible host system.
 * `unstage` Attempt unstaging the repositories if possible. If conflicts
   prevent it from doing so (i.e. missing rebuilds and so on) you will get
   a warning instead, and nothing will happen. Warnings will result in

@@ -1,5 +1,5 @@
 pkgname = "itinerary"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 # fails with no output
@@ -37,6 +37,7 @@ makedepends = [
     "networkmanager-qt-devel",
     "prison-devel",
     "qqc2-desktop-style-devel",
+    "qt6-qtbase-private-devel",  # qjson_p.h
     "qt6-qtdeclarative-devel",
     "qt6-qtlocation-devel",
     "qt6-qtmultimedia-devel",
@@ -56,4 +57,4 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "LGPL-2.0-or-later"
 url = "https://apps.kde.org/itinerary"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/itinerary-{pkgver}.tar.xz"
-sha256 = "226f31c887eed3dc105f50295669c13ac018d1b27587a07228471c0d4913c75f"
+sha256 = "d10611e2b50cd96e8310de152006fe9339b1bc6c5f980b6d9a664812eb645634"

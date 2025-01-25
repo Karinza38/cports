@@ -1,5 +1,5 @@
 pkgname = "kpty"
-pkgver = "6.8.0"
+pkgver = "6.10.0"
 pkgrel = 0
 build_style = "cmake"
 hostmakedepends = [
@@ -18,9 +18,9 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "LGPL-2.1-or-later"
 url = "https://api.kde.org/frameworks/kpty/html"
 source = (
-    f"$(KDE_SITE)/frameworks/{pkgver[:pkgver.rfind('.')]}/kpty-{pkgver}.tar.xz"
+    f"$(KDE_SITE)/frameworks/{pkgver[: pkgver.rfind('.')]}/kpty-{pkgver}.tar.xz"
 )
-sha256 = "fbc7f390a0b8397a5163f16b140c0662c994f614a05f7e5a5161493c3cbc3e36"
+sha256 = "1fccd92d67eac0bfeadac3badbb409dcd720ed224284ed056166ab5787f2d647"
 hardening = ["vis"]
 
 

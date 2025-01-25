@@ -106,7 +106,7 @@ def _get_new_deps(pkg, origin):
 
     # bootstrap packages are not installable ootb
     if pkg.pkgname.endswith("-bootstrap") and pkg.build_style != "meta":
-        deps += ["bootstrap:" + pkg.pkgname.removesuffix("-bootstrap")]
+        deps += ["bootstrap:cbuild"]
 
     # explicit package depends
     for c in pkg.depends:
@@ -256,7 +256,7 @@ def _get_cmdline(
 
     # trigger paths
     for t in pkg.triggers:
-        p = pathlib.Path(t)
+        p = pathlib.Path(t.removeprefix("+"))
         if not p or not p.is_absolute():
             pkg.error(
                 f"invalid trigger path: {t}",
@@ -269,7 +269,7 @@ def _get_cmdline(
         if pkg.rparent.stage > 0:
             pargs += ["--sign-key", f"/tmp/{signkey.name}"]
         else:
-            pargs += ["--sign-key", signkey]
+            pargs += ["--sign-key", str(signkey)]
 
     # for stage 1, we have stage0 apk built without zstd
     if (pkg.stage > 1 and pkg.compression) or pkg.compression == "none":
@@ -296,6 +296,9 @@ def _get_cmdline(
             case "deflate:slow":
                 comp = "deflate:9"
         pargs += ["--compression", comp]
+    elif pkg.stage < 2:
+        # stage0 apk is built without zstd support
+        pargs += ["--compression", "deflate"]
     else:
         pargs += ["--compression", autil.get_compression()]
 

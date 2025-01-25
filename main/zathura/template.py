@@ -1,5 +1,5 @@
 pkgname = "zathura"
-pkgver = "0.5.8"
+pkgver = "0.5.11"
 pkgrel = 0
 build_style = "meson"
 hostmakedepends = [
@@ -21,12 +21,13 @@ makedepends = [
     "libseccomp-devel",
     "sqlite-devel",
 ]
+checkdepends = ["xserver-xorg-xvfb"]
 pkgdesc = "Document viewer"
 maintainer = "ttyyls <contact@behri.org>"
 license = "Zlib"
 url = "https://pwmt.org/projects/zathura"
 source = f"{url}/download/zathura-{pkgver}.tar.xz"
-sha256 = "f2bf8dcb2edff10a8e11f1f981bf8f6a42b997b4f851ab00bfd33a706ad43af8"
+sha256 = "54458a9998af0fb8faef2e934a81127bbe4b790c86dcd2c8b8f32365f3d1b53c"
 
 
 def post_install(self):

@@ -1,5 +1,5 @@
 pkgname = "kpat"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_wrapper = ["wlheadless-run", "--"]
@@ -37,4 +37,4 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "GPL-2.0-or-later"
 url = "https://apps.kde.org/kpat"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/kpat-{pkgver}.tar.xz"
-sha256 = "7e0f5e0a7d0ef8e9d6c61634c830f19f07d41d1253030e01d5ae601278288c1b"
+sha256 = "bc10fe0c244bc92ec8101560617ded9d5b0ed7437ede195f43a4a8ab4a85bd27"

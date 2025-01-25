@@ -1,5 +1,5 @@
 pkgname = "sccache"
-pkgver = "0.8.2"
+pkgver = "0.9.1"
 pkgrel = 0
 build_style = "cargo"
 make_build_args = []
@@ -18,9 +18,12 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "Apache-2.0"
 url = "https://github.com/mozilla/sccache"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "2b3e0ef8902fe7bcdcfccf393e29f4ccaafc0194cbb93681eaac238cdc9b94f8"
+sha256 = "150967a59f148f780acc167c9e35961a196953bd804d513ab013344d73deb436"
 # fails due to comparing ldd output to a glibc bin
 options = ["!check"]
+
+if self.profile().wordsize == 32:
+    broken = "needs atomic64"
 
 # only supported by upstream on x86_64 linux and freebsd
 _have_dist = self.profile().arch == "x86_64"

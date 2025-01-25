@@ -1,5 +1,5 @@
 pkgname = "merkuro"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_args = ["-E", "akonadi-sqlite-.*"]
@@ -21,6 +21,7 @@ makedepends = [
     "kconfigwidgets-devel",
     "kcontacts-devel",
     "kcoreaddons-devel",
+    "kcrash-devel",
     "kdbusaddons-devel",
     "ki18n-devel",
     "kiconthemes-devel",
@@ -54,4 +55,4 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "LGPL-3.0-only AND GPL-3.0-or-later"
 url = "https://apps.kde.org/merkuro.calendar"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/merkuro-{pkgver}.tar.xz"
-sha256 = "2057b484b6c2940f5430a4c6cfaf91cdf27f7bb1df77807f04143a94331f9722"
+sha256 = "9529ef9f24f04e717e6a89d1d57838a8f8155a4a1492cd47338336d02c714da3"

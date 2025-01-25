@@ -1,5 +1,5 @@
 pkgname = "python-pytest-asyncio"
-pkgver = "0.24.0"
+pkgver = "0.25.2"
 pkgrel = 0
 build_style = "python_pep517"
 hostmakedepends = [
@@ -14,6 +14,6 @@ maintainer = "firefly-cpp <iztok@iztok.space>"
 license = "Apache-2.0"
 url = "https://github.com/pytest-dev/pytest-asyncio"
 source = f"$(PYPI_SITE)/p/pytest-asyncio/pytest_asyncio-{pkgver}.tar.gz"
-sha256 = "d081d828e576d85f875399194281e92bf8a68d60d72d1a2faf2feddb6c46b276"
+sha256 = "3f8ef9a98f45948ea91a0ed3dc4268b5326c0e7bce73892acc654df4262ad45f"
 # missing dependencies
 options = ["!check"]

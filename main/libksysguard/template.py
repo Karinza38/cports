@@ -1,5 +1,5 @@
 pkgname = "libksysguard"
-pkgver = "6.2.4"
+pkgver = "6.2.5"
 pkgrel = 0
 build_style = "cmake"
 # some bug in the cmake files seems to not set this to on
@@ -32,7 +32,6 @@ makedepends = [
     "libnl-devel",
     "libpcap-devel",
     "libsensors-devel",
-    "qt6-qtbase-private-devel",
     "qt6-qtdeclarative-devel",
 ]
 pkgdesc = "KDE system monitor library"
@@ -40,7 +39,7 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "LGPL-2.1-or-later AND (GPL-2.0-only OR GPL-3.0-only)"
 url = "https://api.kde.org/plasma/libksysguard/html"
 source = f"$(KDE_SITE)/plasma/{pkgver}/libksysguard-{pkgver}.tar.xz"
-sha256 = "f799f90efd3b3e0ea17b1969bb0cc5744c7762ea16d128b1b4d31dfa78cc58ae"
+sha256 = "9694f3d6b5078b4d82eb8e6ed34eb20e2d109ed7c2234c59a640bc32f31c76ab"
 file_modes = {
     "usr/libexec/ksysguard/ksgrd_network_helper": ("root", "root", 0o755),
 }

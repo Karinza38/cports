@@ -1,5 +1,5 @@
 pkgname = "libreoffice"
-pkgver = "24.8.3.2"
+pkgver = "25.2.0.2"
 pkgrel = 0
 # riscv64: no handling of libcxxabi + likely too slow
 archs = ["x86_64", "ppc64le", "ppc64", "aarch64"]
@@ -108,7 +108,7 @@ makedepends = [
     "libabw-devel",
     "libatomic_ops-devel",
     "libcdr-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libe-book-devel",
     "libepoxy-devel",
     "libepubgen-devel",
@@ -174,10 +174,10 @@ source = [
     f"{_surl}/libreoffice-dictionaries-{pkgver}.tar.xz",
     f"{_surl}/libreoffice-help-{pkgver}.tar.xz",
     f"{_surl}/libreoffice-translations-{pkgver}.tar.xz",
-    f"{_aurl}/rhino-1.7.14.zip",
+    f"{_aurl}/rhino-1.7.15.zip",
     f"{_aurl}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip",
     f"{_aurl}/ace6ab49184e329db254e454a010f56d-libxml-1.1.7.zip",
-    f"{_aurl}/language-subtag-registry-2024-06-14.tar.bz2",
+    f"{_aurl}/language-subtag-registry-2024-11-19.tar.bz2",
     f"{_aurl}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip",
     f"{_aurl}/d8bd5eed178db6e2b18eeed243f85aa8-flute-1.1.6.zip",
     f"{_aurl}/ba2930200c9f019c2d93a8c88c651a0f-flow-engine-0.9.4.zip",
@@ -185,7 +185,7 @@ source = [
     f"{_aurl}/libcmis-0.6.2.tar.xz",
     f"{_aurl}/libstaroffice-0.0.7.tar.xz",
     f"{_aurl}/libzmf-0.0.2.tar.xz",
-    f"{_aurl}/pdfium-6425.tar.bz2",
+    f"{_aurl}/pdfium-6764.tar.bz2",
     f"{_eurl}/8249374c274932a21846fa7629c2aa9b-officeotron-0.7.4-master.jar",
     f"{_eurl}/odfvalidator-0.9.0-RC2-SNAPSHOT-jar-with-dependencies-2726ab578664434a545f8379a01a9faffac0ae73.jar",
     f"{_aurl}/dtoa-20180411.tgz",
@@ -199,20 +199,20 @@ source = [
     f"{_aurl}/8ce2fcd72becf06c41f7201d15373ed9-librepository-1.1.6.zip",
     f"{_aurl}/f94d9870737518e3b597f9265f4e9803-libserializer-1.1.6.zip",
     f"{_aurl}/39bb3fcea1514f1369fcfc87542390fd-sacjava-1.3.zip",
-    f"{_aurl}/skia-m116-2ddcf183eb260f63698aa74d1bb380f247ad7ccd.tar.xz",
+    f"{_aurl}/skia-m130-3c64459d5df2fa9794b277f0959ed8a92552bf4c.tar.xz",
     f"{_aurl}/dragonbox-1.1.3.tar.gz",
-    f"{_aurl}/frozen-1.1.1.tar.gz",
+    f"{_aurl}/frozen-1.2.0.tar.gz",
     f"{_aurl}/zxcvbn-c-2.5.tar.gz",
 ]
 sha256 = [
-    "5d709bac629d550b3ff3b7866f7758820a0badbfba06b9cfb946ec037b5f47e9",
-    "1624aa52c507c77804f222a3a2e572be913327935b158fc73415ef7f389274db",
-    "1e5dc8c6f9f9842d181770155bd5750366152ea0d091f2620ad90464bf3ce713",
-    "0a9c916e7ef6cae8cf1693e87874468c387efc2adc15e5d3208fa028ec5c1c87",
-    "bf4d2d0c5ff8889fd494486db09291cb7965f0bf2f93ef005d3b08070a5a4f5c",
+    "947fb5ea661d83fe23365597afa26e5eb6aba9a1df3eb22c9fb98cc2015803c5",
+    "ba3eaa1bcffda6343ff1284722426b43cbb333ca6dd82855ef286c5a7d8dc91a",
+    "b3b2ddad45a964637601e57cea3b79bb57e94e39ff6b1d64eb4a7d4aaa1ec8c6",
+    "50082ec78c97c2eb0d1947d52f15032e6c84a3ccbb7e07036d95d05329b6cde3",
+    "42fce6baf1bf789b62bf938b8e8ec18a1ac92c989dd6e7221e9531454cbd97fa",
     "75823776fb51a9c526af904f1503a7afaaab900fba83eda64f8a41073724c870",
     "7d2797fe9f79a77009721e3f14fa4a1dec17a6d706bdc93f85f1f01d124fab66",
-    "75bc394dd83ddfd62b172a462db1b66bdb5950f40823ed63b8c7db6b71e37e75",
+    "121f27bd1fabac9a74fb042cf68396b6df74cdf5d1ccc30f4c9b78584cc13864",
     "d30b13f4ba2e3b6a2d4f020c0dee0a9fb9fc6fbcc2d561f36b78da4bf3802370",
     "1b5b24f7bc543c0362b667692f78db8bab4ed6dafc6172f104d0bd3757d8a133",
     "233f66e8d25c5dd971716d4200203a612a407649686ef3b52075d04b4c9df0dd",
@@ -220,7 +220,7 @@ sha256 = [
     "1b5c2d7258ff93eb5f9958ff0e4dfd7332dc75a071bb717dde2217a26602a644",
     "f94fb0ad8216f97127bedef163a45886b43c62deac5e5b0f5e628e234220c8db",
     "27051a30cb057fdb5d5de65a1f165c7153dc76e27fe62251cbb86639eb2caf22",
-    "fe0291b96d7352bac530d13ef2e5fd63ad9980e0128911f88b957b5992508f1c",
+    "59d5df3b38312b069d96a8de9d4f8d7f44a29835c9dc82bd792ea02be86c4e49",
     "f2443f27561af52324eee03a1892d9f569adc8db9e7bca55614898bc2a13a770",
     "d55495ab3a86544650587de2a72180ddf8bfc6376d14ddfa923992dbc86a06e0",
     "0082d0684f7db6f62361b76c4b7faba19e0c7ce5cb8e36c4b65fea8281e711b4",
@@ -234,9 +234,9 @@ sha256 = [
     "abe2c57ac12ba45d83563b02e240fa95d973376de2f720aab8fe11f2e621c095",
     "05640a1f6805b2b2d7e2cb9c50db9a5cb084e3c52ab1a71ce015239b4a1d4343",
     "085f2112c51fa8c1783fac12fbd452650596415121348393bb51f0f7e85a9045",
-    "2223ebce534458a37826e8fe4f24635b0712cde7ed1bd3208f089f6fdd796e01",
+    "53f55303821158b6de9e6b90f1cc3a548611a7e430c1a0883ff159a8db89677d",
     "09d63b05e9c594ec423778ab59b7a5aa1d76fdd71d25c7048b0258c4ec9c3384",
-    "f7c7075750e8fceeac081e9ef01944f221b36d9725beac8681cbd2838d26be45",
+    "ed8339c017d7c5fe019ac2c642477f435278f0dc643c1d69d3f3b1e95915e823",
     "77d6c6ecb35952a8d8ce7f736b7a2bf466275c48210e309b73782d6b7e84dffd",
 ]
 tool_flags = {
@@ -257,7 +257,6 @@ def post_extract(self):
     # copy over patches
     self.cp(self.files_path / "ppc-skia-musttail.patch.1", "external/skia")
     self.cp(self.files_path / "libcmis-libxml2.patch.1", "external/libcmis")
-    self.cp(self.files_path / "libcmis-boost-1.86.patch.1", "external/libcmis")
 
 
 def init_configure(self):

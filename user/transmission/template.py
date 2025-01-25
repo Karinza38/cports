@@ -1,6 +1,6 @@
 pkgname = "transmission"
 pkgver = "4.0.6"
-pkgrel = 0
+pkgrel = 1
 build_style = "cmake"
 configure_args = [
     "-DENABLE_DAEMON=ON",
@@ -26,7 +26,7 @@ hostmakedepends = [
 makedepends = [
     "gtest-devel",
     "gtkmm-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libdeflate-devel",
     "libevent-devel",
     "libpsl-devel",
@@ -37,7 +37,7 @@ makedepends = [
     "qt6-qttools-devel",
 ]
 pkgdesc = "BitTorrent client"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-2.0-or-later"
 url = "https://github.com/transmission/transmission"
 source = f"{url}/releases/download/{pkgver}/transmission-{pkgver}.tar.xz"

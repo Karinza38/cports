@@ -1,5 +1,5 @@
 pkgname = "colord-kde"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 hostmakedepends = [
@@ -25,5 +25,5 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "GPL-2.0-or-later"
 url = "https://invent.kde.org/graphics/colord-kde"
 source = f"$(KDE_SITE)/release-service/{pkgver}/src/colord-kde-{pkgver}.tar.xz"
-sha256 = "ae895e5cfdc3e77bf88a482c034a7748d00a4ce7d74d522cb94b68be876a02d2"
+sha256 = "8e577f90041e2802810d23d67835114962ce594c7e17e9c0d16b66cbb1f36dd9"
 hardening = ["vis"]

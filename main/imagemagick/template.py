@@ -1,5 +1,5 @@
 pkgname = "imagemagick"
-pkgver = "7.1.1.41"
+pkgver = "7.1.1.43"
 pkgrel = 0
 build_style = "gnu_configure"
 configure_args = [
@@ -38,7 +38,7 @@ configure_args = [
     # "--with-wmf",
 ]
 configure_gen = []
-hostmakedepends = ["pkgconf", "automake", "libtool", "perl"]
+hostmakedepends = ["pkgconf", "automake", "slibtool", "perl"]
 makedepends = [
     "bzip2-devel",
     "djvulibre-devel",
@@ -54,7 +54,6 @@ makedepends = [
     "libjpeg-turbo-devel",
     "libjxl-devel",
     "libltdl-devel",
-    "libomp-devel",
     "libpng-devel",
     "libpng-devel",
     "libraw-devel",
@@ -74,12 +73,15 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "ImageMagick"
 url = "https://www.imagemagick.org"
 source = f"https://github.com/ImageMagick/ImageMagick/archive/{'-'.join(pkgver.rsplit('.', 1))}.tar.gz"
-sha256 = "cabf2516dce66da56dd4e3071453b808eefaf4326a93292d2a222a4ea623d601"
+sha256 = "ceb972266b23dc7c1cfce0da5a7f0c9acfb4dc81f40eb542a49476fedbc2618f"
 # runs out of file descriptors
 options = ["!cross", "!check"]
 
 if self.profile().cross:
     hostmakedepends += ["file"]
+
+if self.profile().arch in ["aarch64", "ppc64le", "ppc64", "riscv64", "x86_64"]:
+    makedepends += ["libomp-devel"]
 
 
 def post_install(self):

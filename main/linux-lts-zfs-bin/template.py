@@ -1,8 +1,8 @@
 pkgname = "linux-lts-zfs-bin"
-_kernver = "6.6.63"
-_zfsver = "2.2.6"
+_kernver = "6.6.71"
+_zfsver = "2.3.0"
 pkgver = f"{_zfsver}.{_kernver}"
-pkgrel = 1
+pkgrel = 0
 hostmakedepends = ["perl", "python", "ckms"]
 makedepends = ["linux-lts-devel", "zfs-ckms"]
 # provides the same thing as the ckms variant
@@ -18,7 +18,6 @@ def init_configure(self):
     from cbuild.util import linux
 
     self._linux_version = linux.get_version(self, _kernver)
-    linux.generate_scripts_ckms(self, "zfs", self._linux_version)
 
 
 def configure(self):

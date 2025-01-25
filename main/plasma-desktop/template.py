@@ -1,6 +1,6 @@
 pkgname = "plasma-desktop"
-pkgver = "6.2.4"
-pkgrel = 0
+pkgver = "6.2.5"
+pkgrel = 1
 build_style = "cmake"
 # FIXME: missing layout memory xml file? QTemporaryFile broken?
 # tst_calibrationtool: broken on ppc64le
@@ -51,11 +51,11 @@ makedepends = [
     "plasma-workspace-devel",
     "plasma5support-devel",
     "qt6-qt5compat-devel",
-    "qt6-qtbase-private-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtdeclarative-devel",
     "qt6-qtsvg-devel",
     "qt6-qtwayland-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "sonnet-devel",
     "wayland-protocols",
     "xcb-util-devel",
@@ -109,7 +109,7 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "GPL-2.0-only AND LGPL-2.1-only"
 url = "https://kde.org/plasma-desktop"
 source = f"$(KDE_SITE)/plasma/{pkgver}/plasma-desktop-{pkgver}.tar.xz"
-sha256 = "81f2ab40cdec332918c90b1b732abb2aa0c0502854e48b8fa06fb82b52924da3"
+sha256 = "b73d29202031b7049485d84e615d7bd0a3ca890dcb2c22d8116eb8fe6fe9d068"
 hardening = ["vis"]
 
 # most kdepim stuff depends on messagelib which depends on qtwebengine
@@ -166,7 +166,8 @@ def _(self):
         # non-kde, misc integrations
         "desktop-file-utils",
         "fprintd-meta",
-        # "iio-sensor-proxy",  # FIXME: package and test on device with accelerometer
+        "iio-sensor-proxy-meta",  # tablet/convertible auto-rotate etc.
+        "maliit-keyboard",  # on-screen keyboard
         "power-profiles-daemon-meta",  # battery power saving
     ]
     self.options = ["empty"]
@@ -226,6 +227,7 @@ def _(self):
         "okular",  # document viewer
         "partitionmanager",  # partition manager
         "plasma-systemmonitor",
+        "plasma-vault",
         "skanlite",  # image scanner
         # "skanpage",  # document scanner (TODO: tesseract)
         "spectacle",  # screenshot
@@ -248,17 +250,6 @@ def _(self):
             "khelpcenter",  # documentation viewer
             "konqueror",  # web browser
             "tokodon",  # mastodon client
-        ]
-    if self.rparent.profile().arch in [
-        "aarch64",
-        "ppc64le",
-        "riscv64",
-        "x86_64",
-    ]:
-        self.depends += [
-            # gocryptfs -> go
-            # there are other backends too, but one is abandoned and the other needs fuse2
-            "plasma-vault",  # encrypted file storage
         ]
     self.options = ["empty"]
 

@@ -1,24 +1,30 @@
+commit 06f447d54c721241bea8b5c51a19e79ab292d748
+Author: q66 <q66@chimera-linux.org>
+Date:   Thu Jan 9 17:19:31 2025 +0100
+
+    bla
+
 diff --git a/Cargo.lock b/Cargo.lock
-index 1f7584b..f5955df 100644
+index 710480f..3129b5c 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -2505,7 +2505,6 @@ dependencies = [
+@@ -2545,7 +2545,6 @@ dependencies = [
   "tempfile",
   "test-case",
-  "thiserror 2.0.3",
+  "thiserror 2.0.9",
 - "tikv-jemallocator",
   "toml",
   "tracing",
   "walkdir",
-@@ -2531,7 +2530,6 @@ dependencies = [
-  "rustc-hash 2.0.0",
+@@ -2571,7 +2570,6 @@ dependencies = [
+  "rustc-hash 2.1.0",
   "serde",
   "serde_json",
 - "tikv-jemallocator",
   "ureq",
   "url",
  ]
-@@ -3594,26 +3592,6 @@ dependencies = [
+@@ -3643,26 +3641,6 @@ dependencies = [
   "once_cell",
  ]
  
@@ -46,16 +52,16 @@ index 1f7584b..f5955df 100644
  name = "tinystr"
  version = "0.7.6"
 diff --git a/crates/ruff/Cargo.toml b/crates/ruff/Cargo.toml
-index d1c0741..025b637 100644
+index 5f437b3..3450bbc 100644
 --- a/crates/ruff/Cargo.toml
 +++ b/crates/ruff/Cargo.toml
-@@ -79,8 +79,6 @@ ignored = ["chrono"]
+@@ -79,8 +79,5 @@ ignored = ["chrono"]
  [target.'cfg(target_os = "windows")'.dependencies]
  mimalloc = { workspace = true }
  
 -[target.'cfg(all(not(target_os = "windows"), not(target_os = "openbsd"), not(target_os = "aix"), any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "powerpc64")))'.dependencies]
 -tikv-jemallocator = { workspace = true }
- 
+-
  [lints]
  workspace = true
 diff --git a/crates/ruff/src/main.rs b/crates/ruff/src/main.rs
@@ -83,12 +89,13 @@ index 2271cca..34c3e9d 100644
      // Enabled ANSI colors on Windows 10.
      #[cfg(windows)]
 diff --git a/crates/ruff_benchmark/Cargo.toml b/crates/ruff_benchmark/Cargo.toml
-index c6c8510..ed0b5e3 100644
+index c6c8510..9688650 100644
 --- a/crates/ruff_benchmark/Cargo.toml
 +++ b/crates/ruff_benchmark/Cargo.toml
-@@ -65,5 +65,3 @@ codspeed = ["codspeed-criterion-compat"]
+@@ -64,6 +64,3 @@ codspeed = ["codspeed-criterion-compat"]
+ 
  [target.'cfg(target_os = "windows")'.dev-dependencies]
  mimalloc = { workspace = true }
- 
+-
 -[target.'cfg(all(not(target_os = "windows"), not(target_os = "openbsd"), any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "powerpc64")))'.dev-dependencies]
 -tikv-jemallocator = { workspace = true }

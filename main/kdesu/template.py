@@ -1,5 +1,5 @@
 pkgname = "kdesu"
-pkgver = "6.8.0"
+pkgver = "6.10.0"
 pkgrel = 0
 build_style = "cmake"
 hostmakedepends = [
@@ -19,10 +19,8 @@ pkgdesc = "KDE Framework for running commands as root"
 maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "GPL-2.0-only"
 url = "https://api.kde.org/frameworks/kdesu/html"
-source = (
-    f"$(KDE_SITE)/frameworks/{pkgver[:pkgver.rfind('.')]}/kdesu-{pkgver}.tar.xz"
-)
-sha256 = "0e8a007c413faca4fa7e24382a019baecfe6b6607600ba6411c761e7bc95398f"
+source = f"$(KDE_SITE)/frameworks/{pkgver[: pkgver.rfind('.')]}/kdesu-{pkgver}.tar.xz"
+sha256 = "5ab993abca85cb5798bb437b96a2b3d88079df86128ee30d66ee11f60e51c22e"
 hardening = ["vis"]
 
 

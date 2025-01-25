@@ -1,6 +1,6 @@
 pkgname = "mpg123"
-pkgver = "1.32.9"
-pkgrel = 0
+pkgver = "1.32.10"
+pkgrel = 1
 build_style = "gnu_configure"
 configure_args = [
     "--with-optimization=0",
@@ -19,7 +19,7 @@ makedepends = [
     "libpulse-devel",
     "linux-headers",
     "pipewire-jack-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
 ]
 depends = [self.with_pkgver("mpg123-output-dummy")]
 pkgdesc = "MPEG 1.0/2.0/2.5 audio player"
@@ -27,7 +27,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "LGPL-2.1-only"
 url = "https://www.mpg123.org"
 source = f"$(SOURCEFORGE_SITE)/mpg123/mpg123-{pkgver}.tar.bz2"
-sha256 = "03b61e4004e960bacf2acdada03ed94d376e6aab27a601447bd4908d8407b291"
+sha256 = "87b2c17fe0c979d3ef38eeceff6362b35b28ac8589fbf1854b5be75c9ab6557c"
 
 
 def _genlib(libn, descn, iif):
@@ -44,7 +44,7 @@ for _libn, _descn, _iif in [
     ("oss", "OSS", None),
     ("jack", "JACK", "jack"),
     ("pulse", "PulseAudio", "libpulse"),
-    ("sdl", "SDL", "sdl"),
+    ("sdl", "SDL", "sdl2"),
     ("dummy", "dummy", None),
 ]:
     _genlib(_libn, _descn, _iif)

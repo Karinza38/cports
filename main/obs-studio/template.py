@@ -1,6 +1,6 @@
 pkgname = "obs-studio"
-pkgver = "30.2.3"
-pkgrel = 2
+pkgver = "31.0.1"
+pkgrel = 0
 build_style = "cmake"
 configure_args = [
     "-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF",
@@ -34,7 +34,7 @@ makedepends = [
     "fontconfig-devel",
     "freetype-devel",
     "jansson-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libdatachannel-devel",
     "libpulse-devel",
     "librist-devel",
@@ -42,9 +42,10 @@ makedepends = [
     "libx11-devel",
     "libxcb-devel",
     "libxkbcommon-devel",
-    "mbedtls-devel",
+    "mbedtls-devel-static",
     "mesa-devel",
     "nlohmann-json",
+    "nv-codec-headers",
     "pciutils-devel",
     "pipewire-devel",
     "pipewire-jack-devel",
@@ -65,7 +66,7 @@ maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-2.0-or-later"
 url = "https://obsproject.com"
 source = f"https://github.com/obsproject/obs-studio/archive/refs/tags/{pkgver}.tar.gz"
-sha256 = "3d5f37f564564b6e6fb32ba535285e062ee25d573b3a6a405e5a86d5ab029351"
+sha256 = "535a8a5e36b3701e1fcea5dc46458fcd96d4be0eae5720249080a77bdb8fce72"
 hardening = ["vis", "!cfi"]
 # don't build with lto
 options = ["!check"]

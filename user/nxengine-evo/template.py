@@ -11,14 +11,14 @@ makedepends = [
     "libjpeg-turbo-devel",
     "libpng-devel",
     "nlohmann-json",
-    "sdl-devel",
-    "sdl_image-devel",
-    "sdl_mixer-devel",
+    "sdl2-compat-devel",
+    "sdl2_image-devel",
+    "sdl2_mixer-devel",
     "spdlog-devel",
     "utfcpp",
 ]
 pkgdesc = "Open-source rewrite of the Cave Story engine"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://github.com/nxengine/nxengine-evo"
 source = [

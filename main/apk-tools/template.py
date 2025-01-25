@@ -1,7 +1,6 @@
 pkgname = "apk-tools"
-pkgver = "3.0.0_pre12"
+pkgver = "3.0.0_rc2"
 pkgrel = 0
-_gitrev = "9c0d353c79056d844d80811bada9f32ae82ce2fd"
 build_style = "meson"
 configure_args = [
     "-Dlua=disabled",
@@ -14,23 +13,26 @@ hostmakedepends = [
     "pkgconf",
     "scdoc",
 ]
-makedepends = [
-    "libatomic-chimera-devel-static",
-    "libunwind-devel-static",
-    "openssl-devel-static",
-    "zlib-ng-compat-devel-static",
-]
+makedepends = ["openssl-devel", "zlib-ng-compat-devel"]
 pkgdesc = "Alpine package manager"
 maintainer = "q66 <q66@chimera-linux.org>"
 license = "GPL-2.0-only"
 url = "http://git.alpinelinux.org/cgit/apk-tools"
-source = f"https://gitlab.alpinelinux.org/alpine/apk-tools/-/archive/{_gitrev}.tar.gz"
-sha256 = "2d309e97bf65dddb4d61aefce6333d1d4aea723a60a1b0a0a3baa4a120807388"
+source = f"https://gitlab.alpinelinux.org/alpine/apk-tools/-/archive/v{pkgver}/apk-tools-v{pkgver}.tar.gz"
+sha256 = "c8bbcea845fc9d863f103987da68d8b0df6ae353f21266b3c54316bb702bc92a"
 compression = "deflate"
 options = ["bootstrap"]
 
 if self.stage > 0:
-    makedepends += ["linux-headers", "musl-devel-static", "zstd-devel-static"]
+    makedepends += [
+        "libatomic-chimera-devel-static",
+        "libunwind-devel-static",
+        "linux-headers",
+        "musl-devel-static",
+        "openssl-devel-static",
+        "zlib-ng-compat-devel-static",
+        "zstd-devel-static",
+    ]
     if self.stage > 1:
         depends = ["ca-certificates"]
 else:
@@ -39,11 +41,6 @@ else:
         "-Ddocs=disabled",
         "-Dzstd=false",
     ]
-
-
-def post_extract(self):
-    with open(self.cwd / "VERSION", "w") as f:
-        f.write(f"{pkgver} ({_gitrev})")
 
 
 def init_configure(self):
@@ -63,6 +60,7 @@ def init_configure(self):
 def post_configure(self):
     if self.stage == 0:
         return
+
     from cbuild.util import meson
 
     meson.configure(
@@ -81,11 +79,18 @@ def post_configure(self):
 def post_build(self):
     if self.stage == 0:
         return
+
     self.do("ninja", f"-j{self.make_jobs}", "-C", "build-static", "src/apk")
 
 
 def post_install(self):
     if self.stage == 0:
+        # drop devel bits for stage 0, not used by anything and it lets
+        # us bypass the fact that stage0 packages don't have pc: providers
+        self.uninstall("usr/include")
+        self.uninstall("usr/lib/libapk.a")
+        self.uninstall("usr/lib/libapk.so")
+        self.uninstall("usr/lib/pkgconfig")
         return
 
     self.install_bin("build-static/src/apk", name="apk.static")
@@ -94,7 +99,7 @@ def post_install(self):
     (self.destdir / "etc/apk/interactive").touch()
 
 
-@subpackage("apk-tools-devel")
+@subpackage("apk-tools-devel", self.stage > 0)
 def _(self):
     return self.default_devel()
 

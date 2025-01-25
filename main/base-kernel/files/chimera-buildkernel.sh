@@ -26,19 +26,24 @@ Prepare options and their default values:
     CFLAGS=              The target CFLAGS to use.
     CROSS_COMPILE=       The cross triplet to use.
     CONFIG_FILE=         The config file to copy if not present.
+    EPOCH=               The Unix timestamp for reproducible builds.
+    FLAVOR=              The flavor to use.
     HOSTCC=clang         The host compiler to use.
     HOSTCFLAGS=          The host CFLAGS to use.
+    JOBS=1               The number of build jobs to use.
+    LD=lld               The linker to use.
     LLVM=1               Use LLVM.
     LLVM_IAS=1           Use Clang integrated assembler.
-    LD=lld               The linker to use.
+    LOCALVERSION=        The CONFIG_LOCALVERSION to use, overrides FLAVOR.
     MAKE=make            The make to use.
-    OBJDUMP=llvm-objdump The objdump binary to use.
-    LOCALVERSION=        The CONFIG_LOCALVERSION to use.
     OBJDIR=build         The directory to build in.
-    EPOCH=               The Unix timestamp for reproducible builds.
-    JOBS=1               The number of build jobs to use.
-    STRIP=1              Strip the modules.
+    OBJDUMP=llvm-objdump The objdump binary to use.
+    RELEASE=             The release number to use, with FLAVOR.
     SPLIT_DBG=1          Separate the debug info.
+    STRIP=1              Strip the modules.
+
+If FLAVOR is specified, it's like LOCALVERSION=-RELEASE-FLAVOR, with RELEASE
+becoming 0 if unset.
 
 Install target takes one argument, the destination directory.
 
@@ -73,6 +78,7 @@ CC=clang
 CFLAGS=
 CROSS_COMPILE=
 CONFIG_FILE=
+FLAVOR=
 HOSTCC=clang
 HOSTCFLAGS=
 LLVM=1
@@ -82,6 +88,7 @@ MAKE=make
 OBJDUMP=llvm-objdump
 LOCALVERSION=
 OBJDIR=build
+RELEASE=0
 EPOCH=
 JOBS=1
 STRIP=1
@@ -191,6 +198,7 @@ do_prepare() {
             CFLAGS=*) CFLAGS=${1#CFLAGS=};;
             CROSS_COMPILE=*) CROSS_COMPILE=${1#CROSS_COMPILE=};;
             CONFIG_FILE=*) CONFIG_FILE=${1#CONFIG_FILE=};;
+            FLAVOR=*) FLAVOR=${1#FLAVOR=};;
             HOSTCC=*) HOSTCC=${1#HOSTCC=};;
             HOSTCFLAGS=*) HOSTCFLAGS=${1#HOSTCFLAGS=};;
             LLVM=*) LLVM=${1#LLVM=};;
@@ -200,6 +208,7 @@ do_prepare() {
             OBJDUMP=*) OBJDUMP=${1#OBJDUMP=};;
             LOCALVERSION=*) LOCALVERSION=${1#LOCALVERSION=};;
             OBJDIR=*) OBJDIR=${1#OBJDIR=};;
+            RELEASE=*) RELEASE=${1#RELEASE=};;
             EPOCH=*) EPOCH=${1#EPOCH=};;
             JOBS=*) JOBS=${1#JOBS=};;
             STRIP=*) STRIP=${1#STRIP=};;
@@ -214,7 +223,10 @@ do_prepare() {
     rm -rf "${OBJDIR}" || die "Failed to remove build directory."
     mkdir -p "${OBJDIR}" || die "Failed to create build directory."
 
-    [ -r "$CONFIG_FILE" ] || die "Config file is not readable."
+    if [ ! -r "$CONFIG_FILE" ]; then
+        [ -n "$FLAVOR" ] && CONFIG_FILE="${CONFIG_FILE}.${FLAVOR}"
+        [ -r "$CONFIG_FILE" ] || die "Config file is not readable."
+    fi
     cp "$CONFIG_FILE" "${OBJDIR}/.config" \
         || die "Failed to copy config file."
 
@@ -269,6 +281,8 @@ do_prepare() {
     # adjust localversion if needed
     if [ -n "$LOCALVERSION" ]; then
         gsed -i "s|^\(CONFIG_LOCALVERSION=\).*|\1\"${LOCALVERSION}\"|" ${OBJDIR}/.config
+    elif [ -n "$FLAVOR" ]; then
+        gsed -i "s|^\(CONFIG_LOCALVERSION=\).*|\1\"-${RELEASE}-${FLAVOR}\"|" ${OBJDIR}/.config
     fi
 
     echo "=> Preparing for build..."
@@ -393,7 +407,9 @@ do_install() {
 
     install -d "${DESTDIR}/boot"
     install -m644 "${OBJDIR}/.config" "${DESTDIR}/boot/config-${kernver}"
-    install -m644 "${OBJDIR}/System.map" "${DESTDIR}/boot/System.map-${kernver}"
+    if [ "$SPLIT_DBG" -ne 0 ]; then
+        install -m644 "${OBJDIR}/System.map" "${DESTDIR}/boot/System.map-${kernver}"
+    fi
 
     case "$ARCH" in
         x86_64|i386)
@@ -471,6 +487,19 @@ do_install() {
     if [ -f "${OBJDIR}/arch/powerpc/lib/crtsavres.o" ]; then
         cp "${OBJDIR}/arch/powerpc/lib/crtsavres.o" \
             "${hdrdest}/arch/powerpc/lib"
+    fi
+
+    # module signing utility
+    if [ -f "${OBJDIR}/scripts/sign-file" ]; then
+        cp -p "${OBJDIR}/scripts/sign-file" "${hdrdest}/scripts"
+        chmod 755 "${hdrdest}/scripts/sign-file"
+    fi
+
+    # module signing key and certificate; do *not* ship in public packages
+    if [ -f "${OBJDIR}/certs/signing_key.pem" ]; then
+        mkdir -p "${hdrdest}/certs"
+        cp -p "${OBJDIR}/certs/signing_key.pem" "${hdrdest}/certs"
+        cp -p "${OBJDIR}/certs/signing_key.x509" "${hdrdest}/certs"
     fi
 
     echo ""

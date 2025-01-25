@@ -1,8 +1,8 @@
 # don't forget to update files/ckms.ini when bumping
 # also update linux-*-zfs-bin
 pkgname = "zfs"
-pkgver = "2.2.6"
-pkgrel = 3
+pkgver = "2.3.0"
+pkgrel = 1
 build_style = "gnu_configure"
 configure_args = [
     "--libexecdir=/usr/lib",  # XXX drop libexec
@@ -12,6 +12,7 @@ configure_args = [
     "--with-udevruledir=/usr/lib/udev/rules.d",
     "--with-dracutdir=/usr/lib/dracut",
     "--with-tirpc",
+    "--without-libunwind",
 ]
 # we generate, then create tarball, then configure, so do that manually
 configure_gen = []
@@ -37,7 +38,7 @@ source = [
     f"!https://raw.githubusercontent.com/openzfs/zfs/zfs-{pkgver}/contrib/debian/tree/zfs-initramfs/usr/share/initramfs-tools/hooks/zdev>zdev-{pkgver}",
 ]
 sha256 = [
-    "c92e02103ac5dd77bf01d7209eabdca55c7b3356aa747bb2357ec4222652a2a7",
+    "6e8787eab55f24c6b9c317f3fe9b0da9a665eb34c31df88ff368d9a92e9356a6",
     "c541dfec33ba7dfec3fb85a4532fc9c7a72035316716e93074b2cfa030ca2d12",
 ]
 hardening = ["!vis", "!cfi"]

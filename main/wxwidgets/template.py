@@ -29,7 +29,7 @@ makedepends = [
     "gspell-devel",
     "gst-plugins-base-devel",
     "gtk+3-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libexpat-devel",
     "libjpeg-turbo-devel",
     "xz-devel",
@@ -39,7 +39,7 @@ makedepends = [
     "libtiff-devel",
     "mesa-devel",
     "pcre2-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "zlib-ng-compat-devel",
 ]
 pkgdesc = "WXwidgets GUI toolkit"

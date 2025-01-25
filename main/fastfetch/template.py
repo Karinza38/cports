@@ -1,5 +1,5 @@
 pkgname = "fastfetch"
-pkgver = "2.30.1"
+pkgver = "2.34.1"
 pkgrel = 0
 build_style = "cmake"
 configure_args = ["-DBUILD_TESTS=ON", "-DENABLE_SYSTEM_YYJSON=ON"]
@@ -27,7 +27,7 @@ maintainer = "Jami Kettunen <jami.kettunen@protonmail.com>"
 license = "MIT"
 url = "https://github.com/fastfetch-cli/fastfetch"
 source = f"{url}/archive/refs/tags/{pkgver}.tar.gz"
-sha256 = "5248311a3d8ce65f6f48756dfc0df9f8922d64f5201ee8d980497d52e924906e"
+sha256 = "856920a6484a324088bbbcaf608555c74168078fd34cdbde4d3e4af88bc5cb5f"
 tool_flags = {"CFLAGS": ["-DNDEBUG"]}
 # CFI: dies immediately (ffPlatformPathAddHome at FFlist.c:31:12)
 hardening = ["vis", "!cfi"]

@@ -1,5 +1,5 @@
 pkgname = "keditbookmarks"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 make_check_wrapper = ["wlheadless-run", "--"]
@@ -15,6 +15,7 @@ makedepends = [
     "kcodecs-devel",
     "kconfigwidgets-devel",
     "kcoreaddons-devel",
+    "kcrash-devel",
     "kdoctools-devel",
     "ki18n-devel",
     "kiconthemes-devel",
@@ -33,4 +34,4 @@ url = "https://github.com/KDE/keditbookmarks"
 source = (
     f"$(KDE_SITE)/release-service/{pkgver}/src/keditbookmarks-{pkgver}.tar.xz"
 )
-sha256 = "06346544f9877abf6c22723f36fed12e53042568fafb90d47a5e4e8ec82ac2a1"
+sha256 = "4f42817ccdaabd3acfafb7c6d8dffc7da4382a6080c8a15860e2dc1e2358234e"

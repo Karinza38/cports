@@ -1,5 +1,5 @@
 pkgname = "gamescope"
-pkgver = "3.15.14"
+pkgver = "3.16.1"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
@@ -41,9 +41,10 @@ makedepends = [
     "libxres-devel",
     "libxtst-devel",
     "libxxf86vm-devel",
+    "luajit-devel",
     "pipewire-devel",
     "pixman-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "stb",
     "vulkan-headers",
     "vulkan-loader-devel",
@@ -72,7 +73,7 @@ source_paths = [
     "src/reshade",
 ]
 sha256 = [
-    "dfb0504f55e6e4f0922aaf381bd247e288b5cf9078e8dfe99322c58f8f01a3a0",
+    "acaa77c80670357ed29b8aacd59cc960b7314eb092ca8f2a2f127c456d2ae281",
     "c1913dbd1f3218b113ca7921d8cf9a1c1ddd28b432452c236cdd027dfbd7a95b",
     "37b77586e91f7ebee70380dcddd73bf01ae4acef1053e6be41d0485ede022422",
     "41272ce410c2815de1e268f5baa906b26286bb910e514677d15b8e69f81c5a04",

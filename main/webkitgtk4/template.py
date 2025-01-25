@@ -1,6 +1,6 @@
 # mirrors the gtk3 webkitgtk template
 pkgname = "webkitgtk4"
-pkgver = "2.46.4"
+pkgver = "2.46.5"
 pkgrel = 0
 build_style = "cmake"
 configure_args = [
@@ -100,7 +100,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "LGPL-2.1-or-later AND BSD-2-Clause"
 url = "https://webkitgtk.org"
 source = f"{url}/releases/webkitgtk-{pkgver}.tar.xz"
-sha256 = "0eff5f0ab0a2872ec87df62bc32e3289c8af625716ac71e94b298d74e0374176"
+sha256 = "bad4020bb0cfb3e740df3082c2d9cbf67cf4095596588a56aecdde6702137805"
 debug_level = 1  # otherwise LTO link runs out of memory + fat debuginfo
 tool_flags = {
     "CFLAGS": ["-DNDEBUG"],
@@ -130,12 +130,11 @@ match self.profile().arch:
             "-DENABLE_WEBASSEMBLY=OFF",
         ]
 
-# LTO broken on aarch64 (JIT segfault) and on riscv64 (broken in LLVM)
-match self.profile().arch:
-    case "aarch64" | "riscv64":
-        options += ["!lto"]
-    case _:
-        configure_args += ["-DLTO_MODE=thin"]
+# LTO broken on aarch64 (JIT segfault)
+if self.has_lto(force=True) and self.profile().arch != "aarch64":
+    configure_args += ["-DLTO_MODE=thin"]
+else:
+    options += ["!lto"]
 
 
 def post_install(self):

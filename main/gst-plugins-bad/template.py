@@ -1,5 +1,5 @@
 pkgname = "gst-plugins-bad"
-pkgver = "1.24.9"
+pkgver = "1.24.11"
 pkgrel = 0
 build_style = "meson"
 configure_args = [
@@ -95,7 +95,7 @@ makedepends = [
     "libaom-devel",
     "libass-devel",
     "libbs2b-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libde265-devel",
     "libdrm-devel",
     "libfreeaptx-devel",
@@ -143,7 +143,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "LGPL-2.1-or-later"
 url = "https://gstreamer.freedesktop.org"
 source = f"{url}/src/gst-plugins-bad/gst-plugins-bad-{pkgver}.tar.xz"
-sha256 = "36fcf7a9af0a753b43bb03b9835246f74d72f7124369e66a1e2dc7b04f5a5cab"
+sha256 = "9126c2b7053a5f059db958f43c6a5230d2e843ff9adff8c8c2477ea2457e3315"
 # FIXME int
 hardening = ["!int"]
 # TODO: a few fails, debug later

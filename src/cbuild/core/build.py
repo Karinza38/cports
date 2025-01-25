@@ -649,6 +649,7 @@ def _build(
         return False
 
     if update_check:
+        pkg.log("checking for new versions...")
         uc.check_pkg(pkg)
 
     if not hasattr(pkg, "fetch"):
@@ -659,6 +660,41 @@ def _build(
         if _step_sentinel("fetch"):
             return
 
+    with flock.lock(flock.rootlock()):
+        return _build_locked(
+            step,
+            pkg,
+            depmap,
+            depn,
+            chost,
+            dirty,
+            keep_temp,
+            check_fail,
+            no_update,
+            update_check,
+            _step_sentinel,
+            oldcwd,
+            oldchd,
+            prof,
+        )
+
+
+def _build_locked(
+    step,
+    pkg,
+    depmap,
+    depn,
+    chost,
+    dirty,
+    keep_temp,
+    check_fail,
+    no_update,
+    update_check,
+    _step_sentinel,
+    oldcwd,
+    oldchd,
+    prof,
+):
     if not dirty or step == "deps":
         # no_update is set when this is a build triggered by a missing dep;
         # in this case chroot.update() was already performed by its parent
@@ -673,8 +709,11 @@ def _build(
         # check and install dependencies
         # if a missing dependency has triggered a build, update the chroot
         # afterwards to have a clean state with up to date dependencies
-        if dependencies.install(
-            pkg, pkg.origin_pkg.pkgname, "pkg", depmap, chost, update_check
+        if (
+            dependencies.install(
+                pkg, pkg.origin_pkg.pkgname, "pkg", depmap, chost, update_check
+            )
+            and pkg.stage > 0
         ):
             chroot.update(pkg)
 
@@ -777,16 +816,18 @@ def _build(
         if pkg.stage == 0:
             # a bit scuffed but whatever, simulate "root" with a namespace
             ret = subprocess.run(
-                paths.bwrap(),
-                "--bind",
-                "/",
-                "/",
-                "--uid",
-                "0",
-                "--gid",
-                "0",
-                "--",
-                *mkcmd,
+                [
+                    paths.bwrap(),
+                    "--bind",
+                    "/",
+                    "/",
+                    "--uid",
+                    "0",
+                    "--gid",
+                    "0",
+                    "--",
+                    *mkcmd,
+                ]
             )
         else:
             # better, still cannot use pkg.do :(
@@ -799,7 +840,7 @@ def _build(
                 mount_binpkgs=True,
                 fakeroot=True,
                 binpkgs_rw=True,
-                signkey=asign.get_keypath(),
+                tmpfiles=[asign.get_keypath()],
             )
         # handle whatever error
         if ret.returncode != 0:

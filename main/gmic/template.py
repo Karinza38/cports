@@ -1,5 +1,5 @@
 pkgname = "gmic"
-pkgver = "3.4.3"
+pkgver = "3.5.0"
 pkgrel = 0
 build_style = "makefile"
 make_build_args = [
@@ -9,13 +9,12 @@ make_build_args = [
 make_use_env = True
 hostmakedepends = [
     "bash",
-    "gimp",
     "pkgconf",
     "qt6-qtbase",
 ]
 makedepends = [
     "fftw-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libomp-devel",
     "libpng-devel",
     "libtiff-devel",
@@ -25,11 +24,11 @@ makedepends = [
     "qt6-qtbase-devel",
 ]
 pkgdesc = "Full-featured Open-Source Framework for Image Processing"
-maintainer = "Orphaned <orphaned@chimera-linux.org>"
+maintainer = "Erica Z <zerica@callcc.eu>"
 license = "CECILL-2.1"
 url = "https://gmic.eu"
 source = f"https://gmic.eu/files/source/gmic_{pkgver}.tar.gz"
-sha256 = "79951d06db2928c68bad1d352e536af3f454e9a3c09beefc2c1049d8b4084507"
+sha256 = "847ddf438bbe73ec1447a8d98916571c75664bed050ac11212e45b2eb4c1cad0"
 # vis broken
 # FIXME int: gmic_qt PreviewWidget::updateOriginalImagePosition
 hardening = ["!int"]

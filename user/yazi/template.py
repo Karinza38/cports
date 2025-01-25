@@ -1,5 +1,5 @@
 pkgname = "yazi"
-pkgver = "0.3.3"
+pkgver = "0.4.2"
 pkgrel = 0
 build_style = "cargo"
 make_build_args = ["--bins"]
@@ -9,11 +9,14 @@ hostmakedepends = [
 ]
 makedepends = ["oniguruma-devel", "rust-std"]
 pkgdesc = "Terminal file manager"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "MIT"
 url = "https://yazi-rs.github.io"
 source = f"https://github.com/sxyazi/yazi/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "fe2a458808334fe20eff1ab0145c78d684d8736c9715e4c51bce54038607dc4e"
+sha256 = "88995c90954d140f455cf9ca4f87f9ca36390717377be86b0672456e1eb5f65f"
+
+if self.profile().wordsize == 32:
+    broken = "needs atomic64"
 
 
 def install(self):

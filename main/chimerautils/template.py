@@ -1,6 +1,6 @@
 pkgname = "chimerautils"
-pkgver = "14.1.6"
-pkgrel = 0
+pkgver = "14.2.1"
+pkgrel = 1
 build_style = "meson"
 configure_args = [
     "--libexecdir=/usr/lib/chimerautils",
@@ -18,7 +18,7 @@ makedepends = [
     "xz-devel",
     "zlib-ng-compat-devel",
 ]
-depends = ["base-files"]
+depends = ["base-files", "debianutils"]
 # compat
 provides = [
     self.with_pkgver("musl-fts"),
@@ -29,7 +29,7 @@ maintainer = "q66 <q66@chimera-linux.org>"
 license = "BSD-2-Clause"
 url = "https://github.com/chimera-linux/chimerautils"
 source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "e610fa7b5fe04e707197aeecd4e4f8165f3aa701378c786243e6e0728f6c0839"
+sha256 = "122ee06196ad237148070b9dd9c7ab0a66aab8369090d21650da606492943bf2"
 hardening = ["vis", "cfi"]
 # no test suite
 options = ["bootstrap", "!check"]
@@ -70,6 +70,14 @@ def post_install(self):
     self.install_dir(tdest)
     for f in (self.destdir / "usr/bin").glob("*.tiny"):
         self.mv(f, self.destdir / tdest / f.stem)
+    # etc files, handled with tmpfiles
+    self.install_dir("usr/share/chimerautils")
+    self.install_tmpfiles(self.files_path / "chimerautils.conf")
+    self.install_tmpfiles(
+        self.files_path / "chimerautils-extra.conf", name="chimerautils-extra"
+    )
+    for f in (self.destdir / "etc").iterdir():
+        self.mv(f, self.destdir / "usr/share/chimerautils")
 
 
 @subpackage("chimerautils-devel-man")
@@ -121,7 +129,8 @@ def _(self):
         "man:remote.5",
         "man:locate.updatedb.8",
         "man:updatedb.8",
-        "etc/locate.rc",
         "usr/lib/chimerautils/locate.*",
+        "usr/lib/tmpfiles.d/chimerautils-extra.conf",
+        "usr/share/chimerautils/locate.rc",
         "usr/share/vi",
     ]

@@ -1,7 +1,8 @@
 pkgname = "jj"
-pkgver = "0.23.0"
-pkgrel = 0
+pkgver = "0.25.0"
+pkgrel = 1
 build_style = "cargo"
+prepare_after_patch = True
 hostmakedepends = [
     "cargo-auditable",
     "pkgconf",
@@ -15,17 +16,20 @@ makedepends = [
 ]
 checkdepends = ["openssh"]
 pkgdesc = "Git-compatible VCS frontend"
-maintainer = "Orphaned <orphaned@chimera-linux.org>"
+maintainer = "ttyyls <contact@behri.org>"
 license = "Apache-2.0"
 url = "https://martinvonz.github.io/jj"
 source = f"https://github.com/martinvonz/jj/archive/refs/tags/v{pkgver}.tar.gz"
-sha256 = "18e0cc5600c06e940defce0a23ab4b29885bac265f94176603e5f8f926ed000e"
+sha256 = "3a99528539e414a3373f24eb46a0f153d4e52f7035bb06df47bd317a19912ea3"
 # generates completions with host binary
 options = ["!cross"]
 
 
-def post_patch(self):
-    from cbuild.util import cargo
+def post_prepare(self):
+    from cbuild.util import cargo, patch
+
+    # done separately because we need to patch lockfile before vendoring :/
+    patch.patch_git(self, [self.files_path / "bser.patch"])
 
     cargo.clear_vendor_checksums(self, "serde_bser")
 

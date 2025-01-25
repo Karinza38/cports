@@ -17,6 +17,7 @@ import pathlib
 import contextlib
 import subprocess
 import builtins
+import tempfile
 import stat
 
 from cbuild.core import logger, chroot, paths, profile, spdx, errors
@@ -368,6 +369,7 @@ default_options = {
     "linkundefver": (False, False),
     "framepointer": (True, True),
     "fullrustflags": (False, True),
+    "sanruntime": (False, True),
 }
 
 core_fields = [
@@ -712,6 +714,7 @@ class Template(Package):
         allow_restricted=True,
         data=None,
         init=True,
+        contents=None,
     ):
         super().__init__()
 
@@ -791,9 +794,9 @@ class Template(Package):
             # append and repeat
             self.source_repositories.append(crepo)
 
-        self.exec_module(init)
+        self.exec_module(init, contents)
 
-    def exec_module(self, init):
+    def exec_module(self, init, contents=None):
         def subpkg_deco(spkgname, cond=True, alternative=None):
             def deco(f):
                 if alternative:
@@ -823,6 +826,27 @@ class Template(Package):
         setattr(builtins, "subpackage", subpkg_deco)
         setattr(builtins, "custom_target", target_deco)
         setattr(builtins, "self", self)
+
+        if contents:
+            with tempfile.NamedTemporaryFile(
+                "w", delete_on_close=False, suffix=".py"
+            ) as nf:
+                nf.write(contents)
+                # make sure the contents exist...
+                nf.close()
+                # and build a fresh modspec
+                modspec = importlib.util.spec_from_file_location(
+                    self.full_pkgname, nf.name
+                )
+                self._mod_handle = importlib.util.module_from_spec(modspec)
+                modspec.loader.exec_module(self._mod_handle)
+                self._raw_mod = self._mod_handle
+                self._mod_handle = None
+                delattr(builtins, "self")
+                delattr(builtins, "subpackage")
+            if init:
+                self.init_from_mod()
+            return
 
         modh, modspec = Template._tmpl_dict.get(self.full_pkgname, (None, None))
         if modh:
@@ -1711,6 +1735,7 @@ class Template(Package):
         check=True,
         allow_network=False,
         path=None,
+        tmpfiles=None,
     ):
         cpf = self.profile()
 
@@ -1832,6 +1857,7 @@ class Template(Package):
             lldargs=lld_args,
             binpath=path,
             term=True,
+            tmpfiles=tmpfiles,
         )
 
     def stamp(self, name):
@@ -1904,10 +1930,10 @@ class Template(Package):
 
         return profile.get_hardening(target, self)[hname]
 
-    def has_lto(self, target=None):
+    def has_lto(self, target=None, force=False):
         target = pkg_profile(self, target)
 
-        return self.options["lto"] and target._has_lto(self.stage)
+        return (force or self.options["lto"]) and target._has_lto(self.stage)
 
     def can_lto(self, target=None):
         return pkg_profile(self, target)._has_lto(self.stage)
@@ -2158,10 +2184,10 @@ class Template(Package):
         dest.symlink_to(tgt)
 
     def install_shell(self, *args):
-        self.install_dir("etc/shells.d")
+        self.install_dir("usr/lib/shells.d")
         for s in args:
             self.install_link(
-                f"etc/shells.d/{os.path.basename(s)}", s, absolute=True
+                f"usr/lib/shells.d/{os.path.basename(s)}", s, absolute=True
             )
 
 
@@ -2221,6 +2247,7 @@ def _split_fishcomp(pkg):
 def _split_locale(pkg):
     pkg.take("usr/share/locale", missing_ok=True)
     # translations for qt crap (like lxqt and assorted apps)
+    pkg.take("usr/share/*/i18n/*.qm", missing_ok=True)
     pkg.take("usr/share/*/translations/*.qm", missing_ok=True)
 
 
@@ -2428,8 +2455,8 @@ class Subpackage(Package):
                 sfx = p[col + 1 :]
                 match p[0:col]:
                     case "cmd":
-                        # take potential manpages for that command
-                        # only take manpages for commands that were globbed,
+                        # take potential manpages and known shell completions
+                        # only take stuff for commands that were globbed,
                         # as using the original wildcard would potentially
                         # match false positives
                         def _take_mancmd(p):
@@ -2438,6 +2465,18 @@ class Subpackage(Package):
                             )
                             self._take_impl(
                                 f"usr/share/man/**/man8/{p.name}.8", True
+                            )
+                            self._take_impl(
+                                f"usr/share/bash-completion/completions/{p.name}",
+                                True,
+                            )
+                            self._take_impl(
+                                f"usr/share/zsh/site-functions/_{p.name}",
+                                True,
+                            )
+                            self._take_impl(
+                                f"usr/share/fish/completions/{p.name}.fish",
+                                True,
                             )
 
                         # and then take the command itself
@@ -2449,7 +2488,7 @@ class Subpackage(Package):
                     case "man":
                         dot = sfx.rfind(".")
                         return self._take_impl(
-                            f"usr/share/man/**/man{sfx[dot + 1:]}/{sfx}",
+                            f"usr/share/man/**/man{sfx[dot + 1 :]}/{sfx}",
                             missing_ok,
                         )
         return self._take_impl(p, missing_ok)

@@ -1,5 +1,5 @@
 pkgname = "kontactinterface"
-pkgver = "24.08.3"
+pkgver = "24.12.1"
 pkgrel = 0
 build_style = "cmake"
 hostmakedepends = [
@@ -15,6 +15,7 @@ makedepends = [
     "kparts-devel",
     "kwindowsystem-devel",
     "kxmlgui-devel",
+    "qt6-qtbase-private-devel",  # qtx11extras_p.h
     "qt6-qtdeclarative-devel",
 ]
 pkgdesc = "KDE Kontact plugin interface library"
@@ -24,7 +25,7 @@ url = "https://api.kde.org/kdepim/kontactinterface/html"
 source = (
     f"$(KDE_SITE)/release-service/{pkgver}/src/kontactinterface-{pkgver}.tar.xz"
 )
-sha256 = "bab11c2bd9f0f7008e2f044ce8563b3df7ecea1066a060590ff02676c0b50225"
+sha256 = "9b1fc77f71e2550d4d0cb1f010322a3d4db94ed349a4a4b0513a83b695ed8d58"
 
 
 @subpackage("kontactinterface-devel")

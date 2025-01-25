@@ -1,6 +1,6 @@
 pkgname = "godot"
 pkgver = "4.3"
-pkgrel = 3
+pkgrel = 5
 hostmakedepends = [
     "gettext",
     "pkgconf",
@@ -42,6 +42,9 @@ source = f"https://github.com/godotengine/godot/releases/download/{pkgver}-stabl
 sha256 = "751e55bfad8e04b846f9cf7b6eb80e058986a2cb1b103fc0fe6a4d8526a20e56"
 # cross: nah
 options = ["!cross"]
+
+if self.profile().wordsize == 32:
+    broken = "SafeNumeric seemingly unimplemented"
 
 match self.profile().arch:
     case "x86_64":

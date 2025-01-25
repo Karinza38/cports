@@ -13,14 +13,14 @@ makedepends = [
     "giflib-devel",
     "gst-plugins-base-devel",
     "jasper-devel",
-    "libcurl-devel",
+    "curl-devel",
     "librsvg-devel",
     "libtiff-devel",
     "libxinerama-devel",
     "libxrandr-devel",
     "mesa-devel",
     "poppler-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
 ]
 pkgdesc = "High-performance real-time graphics toolkit"
 maintainer = "q66 <q66@chimera-linux.org>"

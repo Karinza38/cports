@@ -1,6 +1,6 @@
 pkgname = "fractal"
 pkgver = "9"
-pkgrel = 0
+pkgrel = 1
 build_style = "meson"
 hostmakedepends = [
     "cargo-auditable",
@@ -35,6 +35,10 @@ sha256 = "61be5f378545fe4ef76feb7d5604aac6261a3dedcfb5dd756713eacc574d5373"
 # debug: quite massive, CARGO_PROFILE_RELEASE_DEBUG=line-tables-only in
 # env makes it better but it's still ~260M
 options = ["!check", "!debug"]
+
+
+if self.profile().wordsize == 32:
+    broken = "needs atomicu64"
 
 
 def post_patch(self):

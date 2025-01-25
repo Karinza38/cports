@@ -1,5 +1,5 @@
 pkgname = "warp"
-pkgver = "0.7.0"
+pkgver = "0.8.1"
 pkgrel = 0
 build_style = "meson"
 configure_args = ["-Dqr-code-scanning=disabled"]
@@ -16,20 +16,26 @@ makedepends = [
     "rust-std",
 ]
 pkgdesc = "GTK-based magic wormhole client"
-maintainer = "tulilirockz <tulilirockz@outlook.com>"
+maintainer = "Orphaned <orphaned@chimera-linux.org>"
 license = "GPL-3.0-or-later"
 url = "https://gitlab.gnome.org/World/warp"
-source = f"{url}/-/archive/v{pkgver}/warp-{pkgver}.tar.gz"
-sha256 = "c832ddb2c619b1d1e3ebfd9bbe8c485871ab7759e9a854c324bcac41d9e02196"
-
-if self.profile().arch in ["ppc64", "ppc64le", "riscv64"]:
-    broken = "ancient ring, remove next update"
+source = [
+    f"{url}/-/archive/v{pkgver}/warp-{pkgver}.tar.gz",
+    "https://github.com/spdx/license-list-data/archive/refs/tags/v3.25.0.tar.gz",
+]
+source_paths = [".", "license-list-data"]
+sha256 = [
+    "8da6871aca17873264639817c8ba903c96a193d89cbcec46edf64d95d1e143e5",
+    "f3114e9f3fbf27b9768a5fc2ab427e9bc4282d30fea0abc9272456d6abf26fae",
+]
 
 
 def post_patch(self):
     from cbuild.util import cargo
 
     cargo.Cargo(self, wrksrc=".").vendor()
+    # excellent ecosystems :|
+    self.mv("license-list-data", "vendor/license")
 
 
 def init_build(self):

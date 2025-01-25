@@ -8,11 +8,11 @@ makedepends = [
     "fontconfig-devel",
     "freetype-devel",
     "harfbuzz-devel",
-    "libcurl-devel",
+    "curl-devel",
     "libpng-devel",
     "lzo-devel",
     "icu-devel",
-    "sdl-devel",
+    "sdl2-compat-devel",
     "xz-devel",
     "zlib-ng-devel",
 ]
